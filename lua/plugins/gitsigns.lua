@@ -31,10 +31,10 @@ return {
 			map("n", "<leader>gu", gs.undo_stage_hunk, "Undo Stage Hunk")
 			map("n", "<leader>gR", gs.reset_buffer, "Reset Buffer")
 			map("n", "<leader>gp", gs.preview_hunk_inline, "Preview Hunk Inline")
-      -- stylua: ignore start
+			-- stylua: ignore start
 			map("n", "<leader>gb", function() gs.blame_line({ full = true }) end, "Blame Line")
 			map("n", "<leader>gd", gs.diffthis, "Diff This")
-      -- stylua: ignore start
+			-- stylua: ignore start
 			map("n", "<leader>gD", function() gs.diffthis("~") end, "Diff This ~")
 			map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
 		end,
