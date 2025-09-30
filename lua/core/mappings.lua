@@ -12,10 +12,14 @@ vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 local opts = { noremap = true, silent = true }
 
 -- save file
-vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd> w <CR>", opts)
+vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd> w <CR><Esc>", opts)
 
 -- save file without auto-formatting
 vim.keymap.set("n", "<leader>sn", "<cmd>noautocmd w <CR>", opts)
+
+-- escape from insert mode using jk or jj
+vim.keymap.set("i", "jk", "<Esc>", opts)
+vim.keymap.set("i", "jj", "<Esc>", opts)
 
 -- quit file
 vim.keymap.set("n", "<leader>qq", "<cmd> q <CR>", opts)
@@ -28,10 +32,10 @@ vim.keymap.set("n", "n", "nzzzv", opts)
 vim.keymap.set("n", "N", "Nzzzv", opts)
 
 -- Resize with arrows
---vim.keymap.set('n', '<Up>', ':resize -2<CR>', opts)
---vim.keymap.set('n', '<Down>', ':resize +2<CR>', opts)
---vim.keymap.set('n', '<Left>', ':vertical resize -2<CR>', opts)
---vim.keymap.set('n', '<Right>', ':vertical resize +2<CR>', opts)
+vim.keymap.set("n", "<Up>", ":resize -2<CR>", opts)
+vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
+vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
+vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
 
 -- Buffers
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
