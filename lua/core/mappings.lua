@@ -66,3 +66,7 @@ vim.keymap.set("n", "]d", function()
 end, { desc = "Go to next diagnostic message" })
 
 vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+
+-- Add Toggle Term Keymaps
+vim.keymap.set("n", "<leader>t", "<cmd> ToggleTerm <CR>", opts)
+vim.keymap.set("t", "<leader>t", "<cmd> ToggleTerm <CR>", opts)

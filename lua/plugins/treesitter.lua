@@ -5,6 +5,7 @@ return { -- Highlight, edit, and navigate code
 	opts = {
 		ensure_installed = {
 			"lua",
+			"Makefile",
 			"python",
 			"javascript",
 			"typescript",
@@ -18,6 +19,7 @@ return { -- Highlight, edit, and navigate code
 			"java",
 			"go",
 			"gitignore",
+			"clang",
 			"yaml",
 			"make",
 			"cmake",

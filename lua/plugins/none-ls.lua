@@ -15,6 +15,7 @@ return {
 				"prettier", -- ts/js formatter
 				"shfmt", -- Shell formatter
 				"stylua", -- lua formatter; Already installed via Mason
+				"clang_format",
 			},
 			automatic_installation = true,
 		})
@@ -43,6 +44,7 @@ return {
 			null_ls.builtins.formatting.isort,
 			null_ls.builtins.formatting.markdownlint,
 			null_ls.builtins.formatting.prettier,
+			null_ls.builtins.formatting.clang_format,
 			diagnostics.checkmake,
 			formatting.prettier.with({ filetypes = { "html", "json", "yaml", "markdown" } }),
 			formatting.stylua,
