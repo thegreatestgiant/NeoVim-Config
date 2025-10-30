@@ -28,6 +28,9 @@
 - vim-fugitive
 - vim-rhubarb
 - nvim-colorizer
+- sessions
+- java
+- ufo
 
 ## How to use on your server
 
