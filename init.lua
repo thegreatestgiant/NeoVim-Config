@@ -41,4 +41,5 @@ require("lazy").setup({
 	require("plugins.dashboard"),
 	require("plugins.sessions"),
 	require("plugins.java"),
+	require("plugins.ufo"),
 })
