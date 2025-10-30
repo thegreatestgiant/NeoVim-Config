@@ -8,5 +8,12 @@ return {
 		vim.o.foldlevel = 99
 		vim.o.foldlevelstart = 99
 		vim.o.foldenable = true
+
+		require("ufo").setup({
+			provider_selector = function(bufnr, filetype, buftype)
+				-- Fallback to the 'indent' provider if treesitter isn't available
+				return { "treesitter", "indent" }
+			end,
+		})
 	end,
 }
