@@ -39,3 +39,4 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.scrolloff = 8
 vim.o.sidescrolloff = 8
+vim.opt.foldcolumn = "1"

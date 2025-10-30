@@ -30,7 +30,6 @@ return { -- Highlight, edit, and navigate code
 			"html",
 		},
 		-- Autoinstall languages that are not installed
-		auto_install = true,
 		dependencies = {
 			{
 				"nvim-treesitter/nvim-treesitter-textobjects",

@@ -17,6 +17,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.lsp.enable("jdtls")
 -- Setup lazy.nvim
 require("lazy").setup({
 	require("plugins.neo-tree"),
