@@ -19,8 +19,19 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "java",
-	callback = function(args)
+	callback = function()
 		require("plugins.jdtls").setup()
+	end,
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(args)
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		if client and client.name == "jdtls" then
+			vim.schedule(function()
+				vim.diagnostic.reset()
+			end)
+		end
 	end,
 })
 

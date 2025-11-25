@@ -6,25 +6,29 @@ local M = {
 function M.setup()
 	local jdtls = require("jdtls")
 
-	-- mason path
-	local mason_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls"
-	local launcher = vim.fn.glob(mason_path .. "/plugins/org.eclipse.equinox.launcher_*.jar")
+	-----------------------------------------------------------
+	-- ROOT DETECTION (this is the fix)
+	-----------------------------------------------------------
+	local root_dir = require("jdtls.setup").find_root({
+		"Intro To Comp Sci", -- your project root folder
+		"edu", -- your actual Java root
+	}) or vim.fn.getcwd()
 
-	-- root detection
-	local root_markers = { "mvnw", "gradlew", "pom.xml", "build.gradle", ".git" }
-	local root_dir = require("jdtls.setup").find_root(root_markers)
-	if root_dir == "" then
-		return
-	end
-
-	-- workspace
+	-----------------------------------------------------------
+	-- WORKSPACE
+	-----------------------------------------------------------
 	local project_name = vim.fn.fnamemodify(root_dir, ":p:h:t")
 	local workspace_dir = vim.fn.stdpath("data") .. "/jdtls-workspace/" .. project_name
 
-	-- silence unsupported command spam
-	vim.lsp.commands["_java.reloadBundles.command"] = function() end
+	-----------------------------------------------------------
+	-- MASON JDTLS PATH
+	-----------------------------------------------------------
+	local mason_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls"
+	local launcher = vim.fn.glob(mason_path .. "/plugins/org.eclipse.equinox.launcher_*.jar")
 
-	-- command
+	-----------------------------------------------------------
+	-- COMMAND
+	-----------------------------------------------------------
 	local cmd = {
 		"java",
 		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
@@ -46,30 +50,50 @@ function M.setup()
 		workspace_dir,
 	}
 
+	-----------------------------------------------------------
+	-- FIX: correct sourcePaths so imports resolve
+	-----------------------------------------------------------
 	local config = {
 		cmd = cmd,
 		root_dir = root_dir,
-		settings = { java = {
-			format = {
-				enabled = true,
-			},
-		} },
+		settings = {
+			java = {},
+		},
+		on_init = function(client, _)
+			client.notify("workspace/didChangeConfiguration", {
+				settings = {
+					java = {
+						project = {
+							referencedLibraries = {},
+							sourcePaths = {
+								"/home/sean/Intro To Comp Sci/edu",
+								"/home/sean/Intro To Comp Sci/ClassWork",
+							},
+						},
+					},
+				},
+			})
+		end,
 		init_options = { bundles = {} },
 	}
-	-- Global handler for Java client commands to prevent RPC errors
-	vim.lsp.commands["java.apply.workspaceEdit"] = function(command)
-		-- jdtls may send workspace edits via executeClientCommand
-		if command.arguments then
-			vim.lsp.util.apply_workspace_edit(command.arguments[1], "utf-16")
+
+	-----------------------------------------------------------
+	-- FIX: prevent RPC spam (workspace/executeClientCommand)
+	-----------------------------------------------------------
+	vim.lsp.commands["java.apply.workspaceEdit"] = function(cmd)
+		if cmd.arguments then
+			vim.lsp.util.apply_workspace_edit(cmd.arguments[1], "utf-16")
 		end
 		return {}
 	end
 
-	-- catch-all handler for "workspace/executeClientCommand"
 	vim.lsp.handlers["workspace/executeClientCommand"] = function(_, result)
 		return result or {}
 	end
 
+	-----------------------------------------------------------
+	-- START JDTLS
+	-----------------------------------------------------------
 	jdtls.start_or_attach(config)
 end
 
