@@ -29,7 +29,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
 		if client and client.name == "jdtls" then
 			vim.schedule(function()
-				vim.diagnostic.reset()
+				vim.diagnostic.reset(client.id, args.buf)
 			end)
 		end
 	end,
@@ -57,7 +57,6 @@ require("lazy").setup({
 	require("plugins.misc"),
 	require("plugins.dashboard"),
 	require("plugins.sessions"),
-	-- require("plugins.java"),
 	require("plugins.ufo"),
 	require("plugins.lazy-dev"),
 	require("plugins.jdtls"),

@@ -6,29 +6,38 @@ local M = {
 function M.setup()
 	local jdtls = require("jdtls")
 
-	-----------------------------------------------------------
-	-- ROOT DETECTION (this is the fix)
-	-----------------------------------------------------------
-	local root_dir = require("jdtls.setup").find_root({
-		"Intro To Comp Sci", -- your project root folder
-		"edu", -- your actual Java root
-	}) or vim.fn.getcwd()
+	--------------------------------------------------------------------
+	-- ROOT DETECTION (correct + no hardcoding)
+	--------------------------------------------------------------------
+	local function find_root()
+		local cwd = vim.fn.getcwd()
+		if vim.fn.isdirectory(cwd .. "/edu") == 1 then
+			return cwd
+		end
+		local parent = vim.fn.fnamemodify(cwd, ":h")
+		if vim.fn.isdirectory(parent .. "/edu") == 1 then
+			return parent
+		end
+		return cwd
+	end
 
-	-----------------------------------------------------------
-	-- WORKSPACE
-	-----------------------------------------------------------
+	local root_dir = find_root()
+
+	--------------------------------------------------------------------
+	-- WORKSPACE DIR
+	--------------------------------------------------------------------
 	local project_name = vim.fn.fnamemodify(root_dir, ":p:h:t")
 	local workspace_dir = vim.fn.stdpath("data") .. "/jdtls-workspace/" .. project_name
 
-	-----------------------------------------------------------
-	-- MASON JDTLS PATH
-	-----------------------------------------------------------
+	--------------------------------------------------------------------
+	-- MASON JDTLS
+	--------------------------------------------------------------------
 	local mason_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls"
 	local launcher = vim.fn.glob(mason_path .. "/plugins/org.eclipse.equinox.launcher_*.jar")
 
-	-----------------------------------------------------------
+	--------------------------------------------------------------------
 	-- COMMAND
-	-----------------------------------------------------------
+	--------------------------------------------------------------------
 	local cmd = {
 		"java",
 		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
@@ -50,15 +59,17 @@ function M.setup()
 		workspace_dir,
 	}
 
-	-----------------------------------------------------------
-	-- FIX: correct sourcePaths so imports resolve
-	-----------------------------------------------------------
+	--------------------------------------------------------------------
+	-- CONFIG
+	--------------------------------------------------------------------
 	local config = {
 		cmd = cmd,
 		root_dir = root_dir,
 		settings = {
-			java = {},
+			java = nil,
 		},
+
+		-- FIX: register proper source paths AFTER startup
 		on_init = function(client, _)
 			client.notify("workspace/didChangeConfiguration", {
 				settings = {
@@ -66,34 +77,31 @@ function M.setup()
 						project = {
 							referencedLibraries = {},
 							sourcePaths = {
-								"/home/sean/Intro To Comp Sci/edu",
-								"/home/sean/Intro To Comp Sci/ClassWork",
+								root_dir .. "/edu",
+								root_dir .. "/ClassWork",
 							},
 						},
 					},
 				},
 			})
 		end,
+
 		init_options = { bundles = {} },
 	}
 
-	-----------------------------------------------------------
-	-- FIX: prevent RPC spam (workspace/executeClientCommand)
-	-----------------------------------------------------------
+	--------------------------------------------------------------------
+	-- FIX: stop RPC errors / workspace execute command spam
+	--------------------------------------------------------------------
+	vim.lsp.handlers["workspace/executeClientCommand"] = function(_, res)
+		return res or {}
+	end
+
 	vim.lsp.commands["java.apply.workspaceEdit"] = function(cmd)
 		if cmd.arguments then
 			vim.lsp.util.apply_workspace_edit(cmd.arguments[1], "utf-16")
 		end
-		return {}
 	end
 
-	vim.lsp.handlers["workspace/executeClientCommand"] = function(_, result)
-		return result or {}
-	end
-
-	-----------------------------------------------------------
-	-- START JDTLS
-	-----------------------------------------------------------
 	jdtls.start_or_attach(config)
 end
 
