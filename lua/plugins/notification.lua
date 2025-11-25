@@ -31,5 +31,6 @@ return {
 	},
 	config = function(_, opts)
 		require("noice").setup(opts)
+		require("core.utils").load_mappings("noice")
 	end,
 }

@@ -17,7 +17,13 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.lsp.enable("jdtls")
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "java",
+	callback = function(args)
+		require("plugins.jdtls").setup()
+	end,
+})
+
 -- Setup lazy.nvim
 require("lazy").setup({
 	require("plugins.neo-tree"),
@@ -40,6 +46,8 @@ require("lazy").setup({
 	require("plugins.misc"),
 	require("plugins.dashboard"),
 	require("plugins.sessions"),
-	require("plugins.java"),
+	-- require("plugins.java"),
 	require("plugins.ufo"),
+	require("plugins.lazy-dev"),
+	require("plugins.jdtls"),
 })

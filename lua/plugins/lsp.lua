@@ -3,7 +3,7 @@ return {
 	dependencies = {
 		{ "mason-org/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
 
-		"mason-org/mason-lspconfig.nvim",
+		{ "mason-org/mason-lspconfig.nvim", opts = { automatic_enable = { exclude = { "jdtls" } } } },
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		{
 			"j-hui/fidget.nvim",
@@ -107,7 +107,9 @@ return {
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
 		capabilities.textDocument.foldingRange = { dynamicRegistration = false, lineFoldingOnly = true }
 		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
-
+		vim.diagnostic.config({
+			float = { border = "rounded", source = "always" },
+		})
 		-- Enable the following language servers
 		--
 		-- Add any additional override configuration in the following tables. Available keys are:

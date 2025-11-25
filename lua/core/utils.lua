@@ -29,7 +29,6 @@ M.load_mappings = function(plugin)
 
 		todo = {
 			n = {
-				["<leader>tt"] = { "<cmd>TodoTrouble<CR>", "Todo via Trouble" },
 				["<leader>ft"] = { "<cmd>TodoTelescope<CR>", "Todo via Telescope" },
 				["]t"] = {
 					function()
@@ -80,29 +79,6 @@ M.load_mappings = function(plugin)
 					end,
 					"Scroll Backward",
 					expr = true,
-				},
-			},
-		},
-
-		sessions = {
-			n = {
-				["<leader>qs"] = {
-					function()
-						require("persistence").load()
-					end,
-					"Restore Session",
-				},
-				["<leader>ql"] = {
-					function()
-						require("persistence").load({ last = true })
-					end,
-					"Restore Last Session",
-				},
-				["<leader>qd"] = {
-					function()
-						require("persistence").stop()
-					end,
-					"Don't Save Current Session",
 				},
 			},
 		},

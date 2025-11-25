@@ -55,6 +55,12 @@ return {
 			cond = hide_in_width,
 		}
 
+		local record = {
+			require("noice").api.statusline.mode.get,
+			cond = require("noice").api.statusline.mode.has,
+			color = { fg = "#ff9e64" },
+		}
+
 		vim.o.laststatus = vim.g.lualine_laststatus
 
 		require("lualine").setup({
@@ -69,7 +75,7 @@ return {
 				lualine_a = { mode },
 				lualine_b = { "branch" },
 				lualine_c = { filetype, filename },
-				lualine_x = { diagnostics, diff, { "encoding", cond = hide_in_width } },
+				lualine_x = { diagnostics, diff, { "encoding", cond = hide_in_width }, record },
 				lualine_y = {
 					{ "progress", padding = { left = 1, right = 1 } },
 					{ "location", padding = { left = 0, right = 1 } },
