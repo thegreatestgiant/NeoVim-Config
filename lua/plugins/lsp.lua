@@ -90,6 +90,19 @@ return {
 					})
 				end
 
+				vim.api.nvim_create_autocmd("BufWritePre", {
+					group = vim.api.nvim_create_augroup("LspFormatOnSave", { clear = true }),
+					buffer = event.buf,
+					callback = function()
+						vim.lsp.buf.format({
+							async = false,
+							filter = function(client)
+								return client.name == "jdtls"
+							end,
+						})
+					end,
+				})
+
 				-- The following code creates a keymap to toggle inlay hints in your
 				-- code, if the language server you are using supports them
 				if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then

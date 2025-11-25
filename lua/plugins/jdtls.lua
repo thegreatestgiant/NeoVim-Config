@@ -49,7 +49,11 @@ function M.setup()
 	local config = {
 		cmd = cmd,
 		root_dir = root_dir,
-		settings = { java = {} },
+		settings = { java = {
+			format = {
+				enabled = true,
+			},
+		} },
 		init_options = { bundles = {} },
 	}
 	-- Global handler for Java client commands to prevent RPC errors
