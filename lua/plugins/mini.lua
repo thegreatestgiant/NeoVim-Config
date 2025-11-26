@@ -15,7 +15,11 @@ return {
 			require("mini.move").setup()
 			require("mini.bufremove").setup()
 			require("mini.hipatterns").setup()
-			require("mini.animate").setup()
+			-- require("mini.animate").setup({
+			-- 	scroll = {
+			-- 		enable = false,
+			-- 	},
+			-- })
 			require("core.utils").load_mappings("bufremove")
 		end,
 	},

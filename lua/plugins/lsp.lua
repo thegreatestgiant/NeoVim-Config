@@ -94,12 +94,18 @@ return {
 					group = vim.api.nvim_create_augroup("LspFormatOnSave", { clear = true }),
 					buffer = event.buf,
 					callback = function()
+						-- Save the window view BEFORE formatting
+						local view = vim.fn.winsaveview()
+
 						vim.lsp.buf.format({
 							async = false,
 							filter = function(client)
 								return client.name == "jdtls"
 							end,
 						})
+
+						-- Restore the window view AFTER formatting
+						vim.fn.winrestview(view)
 					end,
 				})
 

@@ -67,6 +67,7 @@ function M.setup()
 		root_dir = root_dir,
 		settings = {
 			java = {
+				signatureHelp = { enabled = true },
 				format = {
 					settings = {
 						url = vim.fn.expand("~/.config/nvim/java/eclipse-style.xml"),

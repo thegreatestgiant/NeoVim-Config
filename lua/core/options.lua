@@ -3,6 +3,9 @@ local g = vim.g
 g.mapleader = " "
 g.autoformat = true
 
+vim.opt.splitkeep = "screen"
+vim.opt.shortmess:append("c")
+
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.mouse = "a"

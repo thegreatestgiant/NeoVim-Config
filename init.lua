@@ -1,6 +1,6 @@
 require("core.options")
-require("core.mappings")
 
+-- 1. Setup Lazy.nvim (Plugin Manager)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -17,25 +17,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "java",
-	callback = function()
-		require("plugins.jdtls").setup()
-	end,
-})
-
-vim.api.nvim_create_autocmd("LspAttach", {
-	callback = function(args)
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
-		if client and client.name == "jdtls" then
-			vim.schedule(function()
-				vim.diagnostic.reset(client.id, args.buf)
-			end)
-		end
-	end,
-})
-
--- Setup lazy.nvim
+-- 2. Load Plugins
 require("lazy").setup({
 	require("plugins.neo-tree"),
 	require("plugins.treesitter"),
@@ -58,6 +40,33 @@ require("lazy").setup({
 	require("plugins.dashboard"),
 	require("plugins.sessions"),
 	require("plugins.ufo"),
-	require("plugins.lazy-dev"),
 	require("plugins.jdtls"),
+})
+
+-- 3. Load Mappings (NOW SAFE to call after plugins)
+-- This will now use which-key if it loaded successfully above,
+-- or fallback to native keys if something went wrong.
+require("core.utils").load_mappings("all_globals")
+
+-- 4. Java Autocmds
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "java",
+	callback = function()
+		-- Safety check: ensure plugin module exists before calling setup
+		local ok, jdtls = pcall(require, "plugins.jdtls")
+		if ok then
+			jdtls.setup()
+		end
+	end,
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(args)
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		if client and client.name == "jdtls" then
+			vim.schedule(function()
+				vim.diagnostic.reset(client.id, args.buf)
+			end)
+		end
+	end,
 })

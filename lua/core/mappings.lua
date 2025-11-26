@@ -1,76 +1,220 @@
---vim.keymap.del('n', '<C-L>')
-vim.keymap.del("n", "<C-l>")
+local M = {}
 
--- Set leader key
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+---------------------------------------------------------------------
+-- Sections to load at startup ("global" mappings)
+---------------------------------------------------------------------
+M._global_sections = {
+	"general",
+	"navigation",
+	"window",
+	"buffer",
+	"diagnostic",
+	"misc",
+}
 
--- Disable the spacebar key's default behavior in Normal and Visual modes
-vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+---------------------------------------------------------------------
+-- GENERAL
+---------------------------------------------------------------------
+M.general = {
+	n = {
+		["<leader>"] = { "<Nop>", "Leader noop" },
 
--- For conciseness
-local opts = { noremap = true, silent = true }
+		-- Save
+		["<C-s>"] = { "<cmd>w<CR>", "Save file" },
+		["<leader>sn"] = { "<cmd>noautocmd w<CR>", "Save without formatting" },
 
--- save file
-vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd> w <CR><Esc>", opts)
+		-- Quit
+		["<leader>qq"] = { "<cmd>q<CR>", "Quit" },
+		["<leader>qa"] = { "<cmd>qa<CR>", "Quit all" },
+	},
 
--- save file without auto-formatting
-vim.keymap.set("n", "<leader>sn", "<cmd>noautocmd w <CR>", opts)
+	i = {
+		["<C-s>"] = { "<Esc><cmd>w<CR>", "Save file" },
+		["jk"] = { "<Esc>", "Escape" },
+		["jj"] = { "<Esc>", "Escape" },
+	},
 
--- escape from insert mode using jk or jj
-vim.keymap.set("i", "jk", "<Esc>", opts)
-vim.keymap.set("i", "jj", "<Esc>", opts)
+	v = {
+		["<leader>"] = { "<Nop>", "Leader noop" },
+	},
+}
 
--- quit file
-vim.keymap.set("n", "<leader>qq", "<cmd> q <CR>", opts)
-vim.keymap.set("n", "<leader>qa", "<cmd> qa <CR>", opts)
+---------------------------------------------------------------------
+-- NAVIGATION / MOVEMENT
+---------------------------------------------------------------------
+M.navigation = {
+	n = {
+		["J"] = { "mzJ`z", "Join lines and keep cursor" },
 
-vim.keymap.set("n", "J", "mzJ`z")
-vim.keymap.set("n", "<C-d>", "<C-d>zz", opts)
-vim.keymap.set("n", "<C-u>", "<C-u>zz", opts)
-vim.keymap.set("n", "n", "nzzzv", opts)
-vim.keymap.set("n", "N", "Nzzzv", opts)
+		["<C-d>"] = { "<C-d>zz", "Half page down centered" },
+		["<C-u>"] = { "<C-u>zz", "Half page up centered" },
 
--- Resize with arrows
-vim.keymap.set("n", "<Up>", ":resize -2<CR>", opts)
-vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
-vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
-vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
+		["n"] = { "nzzzv", "Next search result centered" },
+		["N"] = { "Nzzzv", "Prev search result centered" },
+	},
+}
 
--- Buffers
-vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
-vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", opts)
--- vim.keymap.set("n", "<leader>x", ":bdelete!<CR>", opts) -- close buffer
-vim.keymap.set("n", "<leader>b", "<cmd> enew <CR>", opts) -- new buffer
+---------------------------------------------------------------------
+-- WINDOW MANAGEMENT
+---------------------------------------------------------------------
+M.window = {
+	n = {
+		-- Splits
+		["<leader>v"] = { "<C-w>v", "Vertical split" },
+		["<leader>h"] = { "<C-w>s", "Horizontal split" },
+		["<leader>se"] = { "<C-w>=", "Equalize splits" },
 
--- Window management
-vim.keymap.set("n", "<leader>v", "<C-w>v", opts) -- split window vertically
-vim.keymap.set("n", "<leader>h", "<C-w>s", opts) -- split window horizontally
-vim.keymap.set("n", "<leader>se", "<C-w>=", opts) -- make split windows equal width & height
+		-- Navigate splits
+		["<C-k>"] = { "<C-w>k", "Go to upper split" },
+		["<C-j>"] = { "<C-w>j", "Go to lower split" },
+		["<C-h>"] = { "<C-w>h", "Go to left split" },
+		["<C-l>"] = { "<C-w>l", "Go to right split" },
 
--- Navigate between splits
-vim.keymap.set("n", "<C-k>", "<C-w>k<CR>", opts)
-vim.keymap.set("n", "<C-j>", "<C-w>j<CR>", opts)
-vim.keymap.set("n", "<C-h>", "<C-w>h<CR>", opts)
-vim.keymap.set("n", "<C-l>", "<C-w>l<CR>", opts)
+		-- Resize splits
+		["<Up>"] = { ":resize -2<CR>", "Resize -2 vertically" },
+		["<Down>"] = { ":resize +2<CR>", "Resize +2 vertically" },
+		["<Left>"] = { ":vertical resize -2<CR>", "Resize -2 horizontally" },
+		["<Right>"] = { ":vertical resize +2<CR>", "Resize +2 horizontally" },
+	},
+}
 
--- Toggle line wrapping
-vim.keymap.set("n", "<leader>lw", "<cmd>set wrap!<CR>", opts)
+---------------------------------------------------------------------
+-- BUFFERS
+---------------------------------------------------------------------
+M.buffer = {
+	n = {
+		["<Tab>"] = { ":bnext<CR>", "Next buffer" },
+		["<S-Tab>"] = { ":bprevious<CR>", "Previous buffer" },
+		["<leader>b"] = { "<cmd>enew<CR>", "New buffer" },
+	},
+}
 
--- Stay in indent mode
-vim.keymap.set("v", "<", "<gv", opts)
-vim.keymap.set("v", ">", ">gv", opts)
+---------------------------------------------------------------------
+-- DIAGNOSTICS
+---------------------------------------------------------------------
+M.diagnostic = {
+	n = {
+		["[d"] = {
+			function()
+				vim.diagnostic.jump({ count = -1, float = true })
+			end,
+			"Prev diagnostic",
+		},
 
-vim.keymap.set("n", "[d", function()
-	vim.diagnostic.jump({ count = -1, float = true })
-end, { desc = "Go to previous diagnostic message" })
+		["]d"] = {
+			function()
+				vim.diagnostic.jump({ count = 1, float = true })
+			end,
+			"Next diagnostic",
+		},
 
-vim.keymap.set("n", "]d", function()
-	vim.diagnostic.jump({ count = 1, float = true })
-end, { desc = "Go to next diagnostic message" })
+		["<leader>d"] = { vim.diagnostic.open_float, "Float diagnostic" },
+	},
+}
 
-vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+---------------------------------------------------------------------
+-- MISC
+---------------------------------------------------------------------
+M.misc = {
+	n = {
+		["<leader>lw"] = { "<cmd>set wrap!<CR>", "Toggle wrap" },
 
--- Add Toggle Term Keymaps
-vim.keymap.set("n", "<leader>t", "<cmd> ToggleTerm <CR>", opts)
-vim.keymap.set("t", "<leader>t", "<cmd> ToggleTerm <CR>", opts)
+		["<leader>t"] = { "<cmd>ToggleTerm<CR>", "Toggle terminal" },
+	},
+
+	t = {
+		["<leader>t"] = { "<cmd>ToggleTerm<CR>", "Toggle terminal" },
+	},
+
+	v = {
+		["<"] = { "<gv", "Indent left stay selected" },
+		[">"] = { ">gv", "Indent right stay selected" },
+	},
+}
+
+---------------------------------------------------------------------
+-- PLUGIN-SPECIFIC mappings (lazy loaded)
+-- These are only loaded when utils.load_mappings("bufremove") etc. is called
+---------------------------------------------------------------------
+M.bufremove = {
+	n = {
+		["<leader>x"] = {
+			function()
+				local bd = require("mini.bufremove").delete
+				if vim.bo.modified then
+					local choice =
+						vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname()), "&yes\n&no\n&cancel")
+					if choice == 1 then
+						vim.cmd.write()
+						bd(0)
+					elseif choice == 2 then
+						bd(0, true)
+					end
+				else
+					bd(0)
+				end
+			end,
+			"Delete buffer",
+		},
+	},
+}
+
+M.todo = {
+	n = {
+		["<leader>ft"] = { "<cmd>TodoTelescope<CR>", "Todo via Telescope" },
+		["]t"] = {
+			function()
+				require("todo-comments").jump_next()
+			end,
+			"Next todo",
+		},
+		["[t"] = {
+			function()
+				require("todo-comments").jump_prev()
+			end,
+			"Prev todo",
+		},
+	},
+}
+
+M.notify = {
+	n = {
+		["<leader>nd"] = {
+			function()
+				require("notify").dismiss({ pending = false })
+			end,
+			"Dismiss notifications",
+		},
+		["<leader>nh"] = { "<cmd>Telescope notify<CR>", "Notification history" },
+	},
+}
+
+M.noice = {
+	n = {
+		["<leader>nl"] = { "<cmd>Noice last<CR>", "Noice last" },
+		["<leader>nh"] = { "<cmd>Noice telescope<CR>", "Noice history" },
+		["<leader>nd"] = { "<cmd>Noice dismiss<CR>", "Noice dismiss" },
+
+		["<C-f>"] = {
+			function()
+				if not require("noice.lsp").scroll(4) then
+					return "<C-f>"
+				end
+			end,
+			"Scroll forward",
+			expr = true,
+		},
+
+		["<C-b>"] = {
+			function()
+				if not require("noice.lsp").scroll(-4) then
+					return "<C-b>"
+				end
+			end,
+			"Scroll backward",
+			expr = true,
+		},
+	},
+}
+
+return M

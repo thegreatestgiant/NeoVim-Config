@@ -1,12 +1,17 @@
 return {
-	{ -- Useful plugin to show you pending keybinds.
+	{
 		"folke/which-key.nvim",
-		event = "VimEnter", -- Sets the loading event to 'VimEnter'
+		lazy = false, -- Load immediately so utils.lua can use 'wk.add'
+		init = function()
+			vim.o.timeout = true
+			vim.o.timeoutlen = 300 -- Faster timeout for the menu to appear
+		end,
 		opts = {
 			delay = 0,
 			icons = {
-				mappings = vim.g.have_nerd_font,
-				keys = vim.g.have_nerd_font and {} or {
+				-- If you have a Nerd Font, set to true. If not, set to false.
+				mappings = true,
+				keys = {
 					Up = "<Up> ",
 					Down = "<Down> ",
 					Left = "<Left> ",
@@ -38,10 +43,15 @@ return {
 				},
 			},
 
+			-- Document existing key chains
 			spec = {
-				{ "<leader>s", group = "[S]earch" },
-				{ "<leader>t", group = "[T]oggle" },
-				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+				{ "<leader>b", group = "Buffers" }, -- Matches your <leader>b mappings
+				{ "<leader>d", group = "Diagnostics" }, -- Matches <leader>d mappings
+				{ "<leader>n", group = "Notifications/Noice" }, -- Matches <leader>n mappings
+				{ "<leader>q", group = "Quit" }, -- Matches <leader>q mappings
+				{ "<leader>s", group = "Save/Splits" }, -- Renamed from 'Search' to match reality
+				{ "<leader>t", group = "Terminal/Todo" }, -- Matches <leader>t mappings
+				{ "<leader>l", group = "LSP/Misc" },
 			},
 		},
 	},
