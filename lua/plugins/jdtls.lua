@@ -66,7 +66,14 @@ function M.setup()
 		cmd = cmd,
 		root_dir = root_dir,
 		settings = {
-			java = nil,
+			java = {
+				format = {
+					settings = {
+						url = vim.fn.expand("~/.config/nvim/java/eclipse-style.xml"),
+						profile = "GoogleStyle",
+					},
+				},
+			},
 		},
 
 		-- FIX: register proper source paths AFTER startup
