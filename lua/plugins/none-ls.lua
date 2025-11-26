@@ -2,81 +2,122 @@ return {
 	"nvimtools/none-ls.nvim",
 	dependencies = {
 		"nvimtools/none-ls-extras.nvim",
-		"jayp0521/mason-null-ls.nvim", -- ensure dependencies are installed
+		"jayp0521/mason-null-ls.nvim",
 	},
+
 	config = function()
 		local null_ls = require("null-ls")
-		local formatting = null_ls.builtins.formatting -- to setup formatters
-		local diagnostics = null_ls.builtins.diagnostics -- to setup linters
+		local formatting = null_ls.builtins.formatting
+		local diagnostics = null_ls.builtins.diagnostics
 
-		-- Formatters & linters for mason to install
+		--------------------------------------------------------------------------
+		-- Mason integration (installs formatters + linters)
+		--------------------------------------------------------------------------
 		require("mason-null-ls").setup({
 			ensure_installed = {
-				"prettier", -- ts/js formatter
-				"shfmt", -- Shell formatter
-				"stylua", -- lua formatter; Already installed via Mason
+				"prettier",
+				"shfmt",
+				"stylua",
 				"clang_format",
 			},
 			automatic_installation = true,
 		})
 
+		--------------------------------------------------------------------------
+		-- Sources (your original list preserved)
+		--------------------------------------------------------------------------
 		local sources = {
-			null_ls.builtins.formatting.stylua,
+			-- Lua
+			formatting.stylua,
+
+			-- Basic utilities
 			null_ls.builtins.completion.spell,
 			null_ls.builtins.code_actions.gitsigns,
 			null_ls.builtins.code_actions.gomodifytags,
 			null_ls.builtins.code_actions.impl,
 			null_ls.builtins.completion.luasnip,
-			null_ls.builtins.diagnostics.actionlint,
-			null_ls.builtins.diagnostics.alex,
-			null_ls.builtins.diagnostics.ansiblelint,
-			null_ls.builtins.diagnostics.commitlint,
-			null_ls.builtins.diagnostics.markdownlint,
-			null_ls.builtins.diagnostics.mypy,
-			null_ls.builtins.diagnostics.staticcheck,
-			null_ls.builtins.diagnostics.yamllint,
-			null_ls.builtins.formatting.black,
-			null_ls.builtins.formatting.gofmt,
-			null_ls.builtins.formatting.gofumpt,
-			null_ls.builtins.formatting.goimports,
-			null_ls.builtins.formatting.goimports_reviser,
-			null_ls.builtins.formatting.golines,
-			null_ls.builtins.formatting.isort,
-			null_ls.builtins.formatting.markdownlint,
-			null_ls.builtins.formatting.prettier,
-			null_ls.builtins.formatting.clang_format,
+
+			-- Diagnostics
+			diagnostics.actionlint,
+			diagnostics.alex,
+			diagnostics.ansiblelint,
+			diagnostics.commitlint,
+			diagnostics.markdownlint,
+			diagnostics.mypy,
+			diagnostics.staticcheck,
+			diagnostics.yamllint,
 			diagnostics.checkmake,
-			formatting.prettier.with({ filetypes = { "html", "json", "yaml", "markdown" } }),
-			formatting.stylua,
-			formatting.shfmt.with({ args = { "-i", "4" } }),
+
+			-- Formatters
+			formatting.black,
+			formatting.gofmt,
+			formatting.gofumpt,
+			formatting.goimports,
+			formatting.goimports_reviser,
+			formatting.golines,
+			formatting.isort,
+			formatting.markdownlint,
+			formatting.prettier,
+			formatting.clang_format,
 			formatting.terraform_fmt,
+			formatting.shfmt.with({ args = { "-i", "4" } }),
+
+			-- Ruff
 			require("none-ls.formatting.ruff").with({ extra_args = { "--extend-select", "I" } }),
 			require("none-ls.formatting.ruff_format"),
 		}
 
-		local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-		null_ls.setup({
-			-- debug = true, -- Enable debug mode. Inspect logs with :NullLsLog.
-			sources = sources,
-			-- you can reuse a shared lspconfig on_attach callback here
-			on_attach = function(client, bufnr)
-				-- inside none-ls.lua, inside on_attach = function(client, bufnr)
-				if client.name ~= "jdtls" and client:supports_method("textDocument/formatting") then
-					vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-					vim.api.nvim_create_autocmd("BufWritePre", {
-						group = augroup,
-						buffer = bufnr,
-						callback = function()
-							-- save view (cursor, topline, etc) before formatting
-							local view = vim.fn.winsaveview()
-							-- perform formatting synchronously so we can restore view afterwards
-							vim.lsp.buf.format({ async = false })
-							-- restore view after formatting
-							vim.fn.winrestview(view)
+		--------------------------------------------------------------------------
+		-- Format on save (SAFE and cursor-preserving)
+		--------------------------------------------------------------------------
+		local format_group = vim.api.nvim_create_augroup("NullLsFormatOnSave", {})
+
+		local function setup_format_on_save(client, bufnr)
+			-- Only format if this client can format
+			if not client.supports_method("textDocument/formatting") then
+				return
+			end
+
+			vim.api.nvim_clear_autocmds({ group = format_group, buffer = bufnr })
+
+			vim.api.nvim_create_autocmd("BufWritePre", {
+				group = format_group,
+				buffer = bufnr,
+				callback = function()
+					-- Check again: do ANY attached clients support formatting?
+					local can_format = false
+					for _, c in ipairs(vim.lsp.get_active_clients({ bufnr = bufnr })) do
+						if c.supports_method("textDocument/formatting") then
+							can_format = true
+							break
+						end
+					end
+
+					if not can_format then
+						return -- <<<<< Prevents your error!
+					end
+
+					-- Save cursor + window position
+					local view = vim.fn.winsaveview()
+
+					vim.lsp.buf.format({
+						async = false,
+						filter = function(c)
+							return c.name == "null-ls"
 						end,
 					})
-				end
-			end,
+
+					-- Restore cursor + window
+					vim.fn.winrestview(view)
+				end,
+			})
+		end
+		--------------------------------------------------------------------------
+		-- Setup null-ls
+		--------------------------------------------------------------------------
+		null_ls.setup({
+			sources = sources,
+			on_attach = setup_format_on_save,
 		})
 	end,
 }
