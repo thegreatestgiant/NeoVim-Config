@@ -6,6 +6,9 @@ local M = {
 function M.setup()
 	local jdtls = require("jdtls")
 
+	-- FIX: Get standard capabilities (for cmp, snippets, etc.)
+	local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
 	--------------------------------------------------------------------
 	-- ROOT DETECTION (correct + no hardcoding)
 	--------------------------------------------------------------------
@@ -65,6 +68,7 @@ function M.setup()
 	local config = {
 		cmd = cmd,
 		root_dir = root_dir,
+		capabilities = capabilities,
 		settings = {
 			java = {
 				signatureHelp = { enabled = true },
