@@ -34,11 +34,16 @@
 
 ## Required tools for this to work
 
-Neovim .12
+Neovim v.12
 
 - tar
 - curl
 - [ tree-sitter-cli ](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md)
+
+```sh
+npm install -g tree-sitter-cli
+```
+
 - gcc (or any c compiler)
 
 ## How to use on your server
