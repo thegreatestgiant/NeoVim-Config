@@ -32,6 +32,15 @@
 - java
 - ufo
 
+## Required tools for this to work
+
+Neovim .12
+
+- tar
+- curl
+- [ tree-sitter-cli ](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md)
+- gcc (or any c compiler)
+
 ## How to use on your server
 
 ```git
