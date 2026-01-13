@@ -19,6 +19,8 @@ return {
 				"shfmt",
 				"stylua",
 				"clang_format",
+				"alex",
+				"markdownlint",
 			},
 			automatic_installation = true,
 		})
