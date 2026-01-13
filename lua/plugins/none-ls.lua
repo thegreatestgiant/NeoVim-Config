@@ -70,7 +70,8 @@ return {
 		--------------------------------------------------------------------------
 		-- Format on save (SAFE and cursor-preserving)
 		--------------------------------------------------------------------------
-		local format_group = vim.api.nvim_create_augroup("NullLsFormatOnSave", {})
+		-- local format_group = vim.api.nvim_create_augroup("NullLsFormatOnSave", {})
+		local format_group = vim.api.nvim_create_augroup("UnifiedFormatOnSave", { clear = true })
 
 		local function setup_format_on_save(client, bufnr)
 			-- Only format if this client can format
@@ -94,7 +95,7 @@ return {
 					end
 
 					if not can_format then
-						return -- <<<<< Prevents your error!
+						return
 					end
 
 					-- Save cursor + window position

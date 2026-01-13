@@ -65,10 +65,10 @@ M.window = {
 		["<leader>se"] = { "<C-w>=", "Equalize splits" },
 
 		-- Navigate splits
-		["<C-k>"] = { "<C-w>k", "Go to upper split" },
-		["<C-j>"] = { "<C-w>j", "Go to lower split" },
-		["<C-h>"] = { "<C-w>h", "Go to left split" },
-		["<C-l>"] = { "<C-w>l", "Go to right split" },
+		-- ["<C-k>"] = { "<C-w>k", "Go to upper split" },
+		-- ["<C-j>"] = { "<C-w>j", "Go to lower split" },
+		-- ["<C-h>"] = { "<C-w>h", "Go to left split" },
+		-- ["<C-l>"] = { "<C-w>l", "Go to right split" },
 
 		-- Resize splits
 		["<Up>"] = { ":resize -2<CR>", "Resize -2 vertically" },

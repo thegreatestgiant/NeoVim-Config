@@ -90,24 +90,24 @@ return {
 					})
 				end
 
-				vim.api.nvim_create_autocmd("BufWritePre", {
-					group = vim.api.nvim_create_augroup("LspFormatOnSave", { clear = true }),
-					buffer = event.buf,
-					callback = function()
-						-- Save the window view BEFORE formatting
-						local view = vim.fn.winsaveview()
-
-						vim.lsp.buf.format({
-							async = false,
-							filter = function(client)
-								return client.name == "jdtls"
-							end,
-						})
-
-						-- Restore the window view AFTER formatting
-						vim.fn.winrestview(view)
-					end,
-				})
+				-- vim.api.nvim_create_autocmd("BufWritePre", {
+				-- 	group = vim.api.nvim_create_augroup("LspFormatOnSave", { clear = true }),
+				-- 	buffer = event.buf,
+				-- 	callback = function()
+				-- 		-- Save the window view BEFORE formatting
+				-- 		local view = vim.fn.winsaveview()
+				--
+				-- 		vim.lsp.buf.format({
+				-- 			async = false,
+				-- 			filter = function(client)
+				-- 				return client.name == "jdtls"
+				-- 			end,
+				-- 		})
+				--
+				-- 		-- Restore the window view AFTER formatting
+				-- 		vim.fn.winrestview(view)
+				-- 	end,
+				-- })
 
 				-- The following code creates a keymap to toggle inlay hints in your
 				-- code, if the language server you are using supports them
@@ -157,10 +157,10 @@ return {
 						},
 					},
 				},
-				on_attach = function(client)
-					client.server_capabilities.documentFormattingProvider = false
-					client.server_capabilities.documentRangeFormattingProvider = false
-				end,
+				-- on_attach = function(client)
+				-- 	client.server_capabilities.documentFormattingProvider = false
+				-- 	client.server_capabilities.documentRangeFormattingProvider = false
+				-- end,
 			},
 			clangd = {},
 			stylua = {},
@@ -185,12 +185,5 @@ return {
 			vim.lsp.config(server, cfg)
 			vim.lsp.enable(server)
 		end
-		-- local language_servers = vim.lsp.get_clients() -- or list servers manually like {'gopls', 'clangd'}
-		-- for _, ls in ipairs(language_servers) do
-		-- 	require("lspconfig")[ls].setup({
-		-- 		capabilities = capabilities,
-		-- 		-- you can add other fields for setting up lsp server in this table
-		-- 	})
-		-- end
 	end,
 }
