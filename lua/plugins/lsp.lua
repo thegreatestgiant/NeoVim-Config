@@ -53,9 +53,6 @@ return {
 				-- Rename the variable under your cursor.
 				--  Most Language Servers support renaming across files, etc.
 				map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-
-				-- Execute a code action, usually your cursor needs to be on top of an error
-				-- or a suggestion from your LSP for this to activate.
 				map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
 
 				-- WARN: This is not Goto Definition, this is Goto Declaration.
@@ -89,25 +86,6 @@ return {
 						end,
 					})
 				end
-
-				-- vim.api.nvim_create_autocmd("BufWritePre", {
-				-- 	group = vim.api.nvim_create_augroup("LspFormatOnSave", { clear = true }),
-				-- 	buffer = event.buf,
-				-- 	callback = function()
-				-- 		-- Save the window view BEFORE formatting
-				-- 		local view = vim.fn.winsaveview()
-				--
-				-- 		vim.lsp.buf.format({
-				-- 			async = false,
-				-- 			filter = function(client)
-				-- 				return client.name == "jdtls"
-				-- 			end,
-				-- 		})
-				--
-				-- 		-- Restore the window view AFTER formatting
-				-- 		vim.fn.winrestview(view)
-				-- 	end,
-				-- })
 
 				-- The following code creates a keymap to toggle inlay hints in your
 				-- code, if the language server you are using supports them
