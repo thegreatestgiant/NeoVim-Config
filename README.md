@@ -34,11 +34,11 @@
 
 ## Required tools for this to work
 
-Neovim v.12
+Neovm v.12
 
 - tar
 - curl
-- [ tree-sitter-cli ](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md)
+- [tree-stter-cli](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md)
 
 ```sh
 npm install -g tree-sitter-cli
