@@ -84,7 +84,6 @@ return {
 				group = format_group,
 				buffer = bufnr,
 				callback = function()
-					-- Check again: do ANY attached clients support formatting?
 					local can_format = false
 					for _, c in ipairs(vim.lsp.get_active_clients({ bufnr = bufnr })) do
 						if c.supports_method("textDocument/formatting") then

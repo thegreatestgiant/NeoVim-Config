@@ -90,9 +90,38 @@ return {
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
 		capabilities.textDocument.foldingRange = { dynamicRegistration = false, lineFoldingOnly = true }
 		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+
 		vim.diagnostic.config({
-			float = { border = "rounded", source = "always" },
+			float = { border = "rounded", source = "if_many", prefix = " " },
+			-- Inline diagnostics
+			virtual_text = {
+				enabled = true,
+				source = "if_many", -- Show source if multiple LSPs active
+				prefix = "●", -- Icon before the message
+				spacing = 4, -- Space between code and message
+			},
+			signs = true, -- Keep the gutter signs (W, E, etc)
+			underline = true, -- Underline the problematic code
+			update_in_insert = false, -- Don't update while typing
 		})
+
+		-- Show diagnostics in a floating window when cursor stops
+		vim.api.nvim_create_autocmd("CursorHold", {
+			callback = function()
+				vim.diagnostic.open_float(nil, {
+					focusable = false,
+					close_events = { "BufLeave", "CursorMoved", "InsertEnter" },
+					border = "rounded",
+					source = "if_many",
+					prefix = " ",
+					scope = "cursor",
+				})
+			end,
+		})
+
+		-- Reduce the delay before showing (default is 4000ms)
+		vim.opt.updatetime = 500 -- Show after 500ms of no movement
+
 		-- Enable the following language servers
 		--
 		-- Add any additional override configuration in the following tables. Available keys are:
@@ -128,6 +157,22 @@ return {
 			},
 			clangd = {},
 			stylua = {},
+			pylsp = {
+				settings = {
+					pylsp = {
+						plugins = {
+							pyflakes = { enabled = false },
+							pycodestyle = { enabled = false },
+							autopep8 = { enabled = false },
+							yapf = { enabled = false },
+							mccabe = { enabled = false },
+							pylsp_mypy = { enabled = false },
+							pylsp_black = { enabled = false },
+							pylsp_isort = { enabled = false },
+						},
+					},
+				},
+			},
 		}
 
 		-- Ensure the servers and tools above are installed
