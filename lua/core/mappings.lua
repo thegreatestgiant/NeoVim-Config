@@ -118,12 +118,6 @@ M.diagnostic = {
 M.misc = {
 	n = {
 		["<leader>lw"] = { "<cmd>set wrap!<CR>", "Toggle wrap" },
-
-		["<leader>t"] = { "<cmd>ToggleTerm<CR>", "Toggle terminal" },
-	},
-
-	t = {
-		["<leader>t"] = { "<cmd>ToggleTerm<CR>", "Toggle terminal" },
 	},
 
 	v = {
