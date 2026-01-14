@@ -21,6 +21,7 @@ return {
 				"clang_format",
 				"alex",
 				"markdownlint",
+				"ruff",
 			},
 			automatic_installation = true,
 		})
@@ -45,23 +46,19 @@ return {
 			diagnostics.ansiblelint,
 			diagnostics.commitlint,
 			diagnostics.markdownlint,
-			diagnostics.mypy,
 			diagnostics.staticcheck,
 			diagnostics.yamllint,
 			diagnostics.checkmake,
 
 			-- Formatters
-			formatting.black,
 			formatting.gofmt,
 			formatting.gofumpt,
 			formatting.goimports,
 			formatting.goimports_reviser,
 			formatting.golines,
-			formatting.isort,
 			formatting.markdownlint,
-			formatting.prettier,
+			formatting.prettier.with({ filetypes = { "json", "yaml" } }),
 			formatting.clang_format,
-			formatting.terraform_fmt,
 			formatting.shfmt.with({ args = { "-i", "4" } }),
 
 			-- Ruff
