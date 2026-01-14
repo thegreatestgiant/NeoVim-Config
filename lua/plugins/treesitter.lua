@@ -75,13 +75,8 @@ return {
 	},
 	build = ":TSUpdate",
 	config = function()
-		local ts = require("nvim-treesitter")
-
-		-- 1. Setup Compiler (System Default)
-		ts.setup({})
-
-		-- 2. Define Parsers
-		local desired_parsers = {
+		-- 1. Define the list of parsers you want
+		local parsers = {
 			"lua",
 			"python",
 			"javascript",
@@ -95,45 +90,45 @@ return {
 			"json",
 			"java",
 			"go",
-			"gitignore",
 			"c",
 			"cpp",
 			"yaml",
-			"make",
-			"cmake",
 			"markdown",
 			"markdown_inline",
 			"bash",
-			"css",
-			"html",
 		}
 
-		-- 3. Robust Installation Logic
-		-- Filters out already installed parsers to prevent crashes
-		vim.schedule(function()
-			local installed = ts.get_installed()
-			local to_install = vim.tbl_filter(function(lang)
-				return not vim.tbl_contains(installed, lang)
-			end, desired_parsers)
-
-			if #to_install > 0 then
-				vim.notify("Installing " .. #to_install .. " new parsers...", vim.log.levels.INFO)
-				ts.install(to_install, { force = false })
-			end
-		end)
-
-		-- 4. Enable Highlights/Indent/Folds
-		-- Using the new native Neovim method
-		vim.api.nvim_create_autocmd("FileType", {
-			callback = function()
-				local ok = pcall(vim.treesitter.start)
+		local function start_highlight(buf)
+			local ft = vim.bo[buf].filetype
+			-- Check if the parser for this filetype is in our list
+			if vim.tbl_contains(parsers, ft) then
+				-- Manually start the treesitter engine
+				local ok = pcall(vim.treesitter.start, buf)
 				if ok then
-					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+					vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 					vim.wo.foldmethod = "expr"
 					vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 				end
+			end
+		end
+
+		-- 3. Install missing parsers manually
+		local ts = require("nvim-treesitter")
+		for _, lang in ipairs(parsers) do
+			if not ts.get_parser_info(lang) then
+				vim.cmd("TSInstallSync " .. lang)
+			end
+		end
+
+		-- 4. Autocmd for FUTURE buffers
+		vim.api.nvim_create_autocmd("FileType", {
+			callback = function(args)
+				start_highlight(args.buf)
 			end,
 		})
+
+		-- 5. Run immediately for the CURRENT buffer (Fixes your race condition)
+		start_highlight(vim.api.nvim_get_current_buf())
 	end,
 	{
 		"nvim-treesitter/nvim-treesitter-context",

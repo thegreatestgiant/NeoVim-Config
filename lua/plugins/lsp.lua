@@ -166,7 +166,14 @@ return {
 					},
 				},
 			},
-			ruff = {},
+			ruff = {
+				on_attach = function(client)
+					client.server_capabilities.hoverProvider = false
+				end,
+			},
+			clangd = {
+				filetypes = { "c", "cpp", "objc", "objcpp" }, -- Ensure this is restrictive
+			},
 		}
 
 		-- Ensure the servers and tools above are installed
