@@ -34,17 +34,15 @@
 
 ## Required tools for this to work
 
-Neovm v.12
-
-- tar
-- curl
-- [tree-stter-cli](https://github.com/tree-sitter/tree-sitter/blob/master/crates/cli/README.md)
-
-```sh
-npm install -g tree-sitter-cli
-```
-
-- gcc (or any c compiler)
+- **Neovim** >= 0.10
+- **Git**
+- **C Compiler** (gcc, clang, or zig) - Required for `nvim-treesitter` and `telescope-fzf-native`
+- **Make** - Required to build `telescope-fzf-native`
+- **Node.js & npm** - Required for `tree-sitter-cli`, `prettier`, `alex`, `markdownlint`
+- **Ripgrep** (`rg`) - Required for `telescope` live grep
+- **Unzip** & **Tar** & **Curl** - Required by `mason.nvim` to install servers
+- **JDK 17+** - Required for Java development (`jdtls`)
+- **Nerd Font** - Required for icons in `neo-tree` and `lualine`
 
 ## How to use on your server
 
