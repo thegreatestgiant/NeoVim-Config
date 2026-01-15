@@ -1,138 +1,131 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	branch = "main", -- explicit branch for the rewrite
+	branch = "main",
 	lazy = false,
 	dependencies = {
 		{
 			"nvim-treesitter/nvim-treesitter-textobjects",
-			branch = "main", -- MUST be main to match treesitter rewrite
+			branch = "main",
 			lazy = true,
-			config = function()
-				-- 1. Setup Textobjects (Native Setup)
-				-- The new textobjects setup does not use the .configs module
-				require("nvim-treesitter.textobjects").setup({
-					move = {
-						enable = true,
-						set_jumps = true,
-						goto_next_start = {
-							["]f"] = "@function.outer",
-							["]c"] = "@class.outer",
-							["]a"] = "@parameter.inner",
-						},
-						goto_next_end = {
-							["]F"] = "@function.outer",
-							["]C"] = "@class.outer",
-							["]A"] = "@parameter.inner",
-						},
-						goto_previous_start = {
-							["[f"] = "@function.outer",
-							["[c"] = "@class.outer",
-							["[a"] = "@parameter.inner",
-						},
-						goto_previous_end = {
-							["[F"] = "@function.outer",
-							["[C"] = "@class.outer",
-							["[A"] = "@parameter.inner",
-						},
-					},
-				})
-
-				-- 2. Apply Diff-Mode Patch (Rewritten for 'main')
-				-- We no longer look up 'configs'. We simply wrap the move module.
-				local ok, move = pcall(require, "nvim-treesitter.textobjects.move")
-				if ok then
-					for name, fn in pairs(move) do
-						if name:find("goto") == 1 then
-							move[name] = function(q, ...)
-								-- If we are in diff mode, and the movement is related to 'c' (change/class),
-								-- we prioritize the native Vim diff jump.
-								if vim.wo.diff then
-									local key = vim.fn.getcharstr() -- optional: strictly check what key triggered this if needed
-									-- Hardcoded check: If the intent was likely [c or ]c, perform native diff jump.
-									-- Since we can't easily detect the *pressed* key inside this function without overhead,
-									-- we assume if the user is in diff mode, they likely want standard behavior.
-
-									-- Simple heuristic: Just run the native command if it's a class query
-									if q == "@class.outer" then
-										-- Check direction based on function name
-										if name:find("next") then
-											vim.cmd("normal! ]c")
-										else
-											vim.cmd("normal! [c")
-										end
-										return
-									end
-								end
-
-								-- Otherwise, run the standard Treesitter movement
-								return fn(q, ...)
-							end
-						end
-					end
-				end
-			end,
+		},
+		{
+			"nvim-treesitter/nvim-treesitter-context",
+			enabled = true,
+			opts = { max_lines = 3 },
 		},
 	},
 	build = ":TSUpdate",
 	config = function()
-		-- 1. Define the list of parsers you want
-		local parsers = {
-			"lua",
-			"python",
-			"javascript",
-			"typescript",
-			"vimdoc",
-			"vim",
-			"regex",
-			"sql",
-			"dockerfile",
-			"toml",
-			"json",
-			"java",
-			"go",
+		-- ========================================================================
+		-- STEP 1: INSTALL PARSERS
+		-- ========================================================================
+		-- Define which languages you want syntax highlighting for
+		local languages = {
+			"bash",
 			"c",
 			"cpp",
-			"yaml",
+			"dockerfile",
+			"gitignore",
+			"go",
+			"html",
+			"java",
+			"json",
+			"lua",
 			"markdown",
 			"markdown_inline",
-			"bash",
+			"python",
+			"regex",
+			"toml",
+			"vim",
+			"vimdoc",
+			"yaml",
 		}
 
-		local function start_highlight(buf)
-			local ft = vim.bo[buf].filetype
-			-- Check if the parser for this filetype is in our list
-			if vim.tbl_contains(parsers, ft) then
-				-- Manually start the treesitter engine
-				local ok = pcall(vim.treesitter.start, buf)
-				if ok then
-					vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-					vim.wo.foldmethod = "expr"
-					vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-				end
-			end
-		end
+		-- Install the parsers (no-op if already installed)
+		require("nvim-treesitter").install(languages)
 
-		-- 3. Install missing parsers manually
-		local ts = require("nvim-treesitter")
-		for _, lang in ipairs(parsers) do
-			if not ts.get_parser_info(lang) then
-				vim.cmd("TSInstallSync " .. lang)
-			end
-		end
+		-- ========================================================================
+		-- STEP 2: AUTO-ENABLE HIGHLIGHTING
+		-- ========================================================================
+		-- Map parser names to filetypes (most are 1:1, but "bash" → "sh")
+		local filetypes = {
+			"sh", -- bash parser
+			"c",
+			"cpp",
+			"dockerfile",
+			"gitignore",
+			"go",
+			"html",
+			"java",
+			"json",
+			"lua",
+			"markdown",
+			"python",
+			"vim",
+			"toml",
+			"yaml",
+		}
 
-		-- 4. Autocmd for FUTURE buffers
+		-- Create autocmd to enable highlighting when you open these file types
+		local augroup = vim.api.nvim_create_augroup("TreesitterHighlighting", { clear = true })
+
 		vim.api.nvim_create_autocmd("FileType", {
+			group = augroup,
+			pattern = filetypes,
 			callback = function(args)
-				start_highlight(args.buf)
+				local bufnr = args.buf
+
+				-- Start treesitter syntax highlighting
+				local ok = pcall(vim.treesitter.start, bufnr)
+
+				if ok then
+					-- Enable treesitter-based code folding
+					vim.wo[0][bufnr].foldmethod = "expr"
+					vim.wo[0][bufnr].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+
+					-- Enable treesitter-based indentation
+					vim.bo[bufnr].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end
 			end,
 		})
 
-		-- 5. Run immediately for the CURRENT buffer (Fixes your race condition)
-		start_highlight(vim.api.nvim_get_current_buf())
+		-- ========================================================================
+		-- STEP 3: TEXTOBJECT NAVIGATION KEYMAPS
+		-- ========================================================================
+		-- Navigate between functions and classes with ]f, [f, ]c, [c
+		vim.api.nvim_create_autocmd("FileType", {
+			group = augroup,
+			pattern = filetypes,
+			callback = function(args)
+				local bufnr = args.buf
+				local opts = { buffer = bufnr, silent = true }
+
+				-- Jump to next/previous function
+				vim.keymap.set("n", "]f", function()
+					require("nvim-treesitter.textobjects.move").goto_next_start("@function.outer")
+				end, vim.tbl_extend("force", opts, { desc = "Next function" }))
+
+				vim.keymap.set("n", "[f", function()
+					require("nvim-treesitter.textobjects.move").goto_previous_start("@function.outer")
+				end, vim.tbl_extend("force", opts, { desc = "Previous function" }))
+
+				-- Jump to next/previous class
+				vim.keymap.set("n", "]c", function()
+					require("nvim-treesitter.textobjects.move").goto_next_start("@class.outer")
+				end, vim.tbl_extend("force", opts, { desc = "Next class" }))
+
+				vim.keymap.set("n", "[c", function()
+					require("nvim-treesitter.textobjects.move").goto_previous_start("@class.outer")
+				end, vim.tbl_extend("force", opts, { desc = "Previous class" }))
+			end,
+		})
+
+		-- ========================================================================
+		-- STEP 4: FOLDING SETTINGS
+		-- ========================================================================
+		vim.o.foldcolumn = "1" -- Show fold column
+		vim.o.foldlevel = 99 -- Open all folds by default
+		vim.o.foldlevelstart = 99 -- Open all folds when opening a file
+		vim.o.foldenable = true -- Enable folding
 	end,
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		enabled = true,
-		opts = { max_lines = 3 },
-	},
 }
