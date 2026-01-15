@@ -21,7 +21,6 @@ return {
 				"alex",
 				"markdownlint",
 				"ruff",
-				"mypy",
 			},
 			automatic_installation = true,
 		})
@@ -49,7 +48,6 @@ return {
 			diagnostics.staticcheck,
 			diagnostics.yamllint,
 			diagnostics.checkmake,
-			diagnostics.mypy,
 
 			-- Formatters
 			formatting.gofmt,

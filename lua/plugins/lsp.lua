@@ -111,8 +111,19 @@ return {
 		-- Show diagnostics in a floating window when cursor stops
 		vim.api.nvim_create_autocmd("CursorHold", {
 			callback = function()
+				-- 1. Get all windows in the current tab
+				local wins = vim.api.nvim_tabpage_list_wins(0)
+
+				-- 2. Check if any existing window is a floating window
+				for _, win in pairs(wins) do
+					local config = vim.api.nvim_win_get_config(win)
+					-- If a floating window (relative is not empty) is already open, return
+					if config.relative ~= "" then
+						return
+					end
+				end
 				vim.diagnostic.open_float(nil, {
-					focusable = false,
+					-- focusable = false,
 					close_events = { "BufLeave", "CursorMoved", "InsertEnter" },
 					border = "rounded",
 					source = "if_many",
