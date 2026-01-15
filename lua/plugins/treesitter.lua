@@ -80,8 +80,8 @@ return {
 
 				if ok then
 					-- Enable treesitter-based code folding
-					vim.wo[0][bufnr].foldmethod = "expr"
-					vim.wo[0][bufnr].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+					vim.wo.foldmethod = "expr"
+					vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 
 					-- Enable treesitter-based indentation
 					vim.bo[bufnr].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
