@@ -17,9 +17,5 @@ return {
 		init = function()
 			vim.notify = require("notify")
 		end,
-		-- config = function(_, opts)
-		-- 	require("notify").setup(opts)
-		-- 	-- require("utils").load_mappings("notify")
-		-- end,
 	},
 }

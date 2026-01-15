@@ -19,9 +19,4 @@ return {
 			},
 		},
 	},
-	keys = {
-		{ "<leader>M", desc = "+Maven", mode = { "n", "v" } },
-		{ "<leader>Mm", "<cmd>Maven<cr>", desc = "Maven Projects" },
-		{ "<leader>Mf", "<cmd>MavenFavorites<cr>", desc = "Maven Favorite Commands" },
-	},
 }

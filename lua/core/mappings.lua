@@ -1,7 +1,7 @@
 local M = {}
 
 ---------------------------------------------------------------------
--- Sections to load at startup ("global" mappings)
+-- Sections to load at startup ("global" mappings - non-plugin)
 ---------------------------------------------------------------------
 M._global_sections = {
 	"general",
@@ -10,6 +10,7 @@ M._global_sections = {
 	"buffer",
 	"diagnostic",
 	"misc",
+	"maven",
 }
 
 ---------------------------------------------------------------------
@@ -21,7 +22,6 @@ M.general = {
 
 		-- Save
 		["<C-s>"] = { "<cmd>w<CR>", "Save file" },
-		["<leader>sn"] = { "<cmd>noautocmd w<CR>", "Save without formatting" },
 
 		-- Quit
 		["<leader>qq"] = { "<cmd>q<CR>", "Quit" },
@@ -59,16 +59,9 @@ M.navigation = {
 ---------------------------------------------------------------------
 M.window = {
 	n = {
-		-- Splits
+		-- Splits (keep at root level for quick access)
 		["<leader>v"] = { "<C-w>v", "Vertical split" },
 		["<leader>h"] = { "<C-w>s", "Horizontal split" },
-		["<leader>se"] = { "<C-w>=", "Equalize splits" },
-
-		-- Navigate splits
-		-- ["<C-k>"] = { "<C-w>k", "Go to upper split" },
-		-- ["<C-j>"] = { "<C-w>j", "Go to lower split" },
-		-- ["<C-h>"] = { "<C-w>h", "Go to left split" },
-		-- ["<C-l>"] = { "<C-w>l", "Go to right split" },
 
 		-- Resize splits
 		["<Up>"] = { ":resize -2<CR>", "Resize -2 vertically" },
@@ -85,7 +78,6 @@ M.buffer = {
 	n = {
 		["<Tab>"] = { ":bnext<CR>", "Next buffer" },
 		["<S-Tab>"] = { ":bprevious<CR>", "Previous buffer" },
-		["<leader>b"] = { "<cmd>enew<CR>", "New buffer" },
 	},
 }
 
@@ -108,7 +100,7 @@ M.diagnostic = {
 			"Next diagnostic",
 		},
 
-		["<leader>d"] = { vim.diagnostic.open_float, "Float diagnostic" },
+		["<leader>d"] = { vim.diagnostic.open_float, "Show diagnostic" },
 	},
 }
 
@@ -117,9 +109,8 @@ M.diagnostic = {
 ---------------------------------------------------------------------
 M.misc = {
 	n = {
-		["<leader>lw"] = { "<cmd>set wrap!<CR>", "Toggle wrap" },
+		["<leader>tw"] = { "<cmd>set wrap!<CR>", "[T]oggle [w]rap" },
 	},
-
 	v = {
 		["<"] = { "<gv", "Indent left stay selected" },
 		[">"] = { ">gv", "Indent right stay selected" },
@@ -128,8 +119,119 @@ M.misc = {
 
 ---------------------------------------------------------------------
 -- PLUGIN-SPECIFIC mappings (lazy loaded)
--- These are only loaded when utils.load_mappings("bufremove") etc. is called
+-- These are called from individual plugin configs
 ---------------------------------------------------------------------
+
+-- Window/Write operations
+M.write = {
+	n = {
+		["<leader>ww"] = { "<cmd>w<CR>", "Write/Save" },
+		["<leader>wn"] = { "<cmd>noautocmd w<CR>", "Write without formatting" },
+		["<leader>w="] = { "<C-w>=", "Equalize splits" },
+	},
+}
+
+-- LSP mappings (buffer-local, called on LspAttach)
+M.lsp = {
+	n = {
+		["desc"] = { "LSP: " },
+		["<leader>la"] = {
+			function()
+				vim.lsp.buf.code_action()
+			end,
+			"Code [a]ction",
+		},
+		["<leader>lD"] = {
+			function()
+				require("telescope.builtin").lsp_type_definitions()
+			end,
+			"Type [D]efinition",
+		},
+		["<leader>lr"] = {
+			function()
+				vim.lsp.buf.rename()
+			end,
+			"[R]ename",
+		},
+		["<leader>ls"] = {
+			function()
+				require("telescope.builtin").lsp_document_symbols()
+			end,
+			"Document [s]ymbols",
+		},
+		["<leader>lS"] = {
+			function()
+				require("telescope.builtin").lsp_dynamic_workspace_symbols()
+			end,
+			"Workspace [S]ymbols",
+		},
+		["<leader>lh"] = {
+			function()
+				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }))
+			end,
+			"Toggle inlay [h]ints",
+		},
+
+		-- Standard LSP goto mappings (without leader)
+		["gd"] = {
+			function()
+				require("telescope.builtin").lsp_definitions()
+			end,
+			"[G]oto [d]efinition",
+		},
+		["gr"] = {
+			function()
+				require("telescope.builtin").lsp_references()
+			end,
+			"[G]oto [r]eferences",
+		},
+		["gI"] = {
+			function()
+				require("telescope.builtin").lsp_implementations()
+			end,
+			"[G]oto [i]mplementation",
+		},
+		["gD"] = {
+			function()
+				vim.lsp.buf.declaration()
+			end,
+			"[G]oto [D]eclaration",
+		},
+		["K"] = {
+			function()
+				vim.lsp.buf.hover()
+			end,
+			"Hover documentation",
+		},
+		-- C-k is for signature help (shows function parameters)
+		["<C-k>"] = {
+			function()
+				vim.lsp.buf.signature_help()
+			end,
+			"Signature help",
+		},
+	},
+
+	x = {
+		["<leader>la"] = {
+			function()
+				vim.lsp.buf.code_action()
+			end,
+			"Code [a]ction",
+		},
+	},
+
+	v = {
+		["<leader>la"] = {
+			function()
+				vim.lsp.buf.code_action()
+			end,
+			"Code [a]ction",
+		},
+	},
+}
+
+-- Buffer remove (mini.bufremove)
 M.bufremove = {
 	n = {
 		["<leader>x"] = {
@@ -153,41 +255,31 @@ M.bufremove = {
 	},
 }
 
+-- Todo comments
 M.todo = {
 	n = {
-		["<leader>ft"] = { "<cmd>TodoTelescope<CR>", "Todo via Telescope" },
+		["<leader>st"] = { "<cmd>TodoTelescope<CR>", "[S]earch [T]odos" },
 		["]t"] = {
 			function()
 				require("todo-comments").jump_next()
 			end,
-			"Next todo",
+			"Next Todo",
 		},
 		["[t"] = {
 			function()
 				require("todo-comments").jump_prev()
 			end,
-			"Prev todo",
+			"Previous Todo",
 		},
 	},
 }
 
-M.notify = {
-	n = {
-		["<leader>nd"] = {
-			function()
-				require("notify").dismiss({ pending = false })
-			end,
-			"Dismiss notifications",
-		},
-		["<leader>nh"] = { "<cmd>Telescope notify<CR>", "Notification history" },
-	},
-}
-
+-- Noice
 M.noice = {
 	n = {
-		["<leader>nl"] = { "<cmd>Noice last<CR>", "Noice last" },
-		["<leader>nh"] = { "<cmd>Noice telescope<CR>", "Noice history" },
-		["<leader>nd"] = { "<cmd>Noice dismiss<CR>", "Noice dismiss" },
+		["<leader>nl"] = { "<cmd>Noice last<CR>", "[N]oice [l]ast" },
+		["<leader>nh"] = { "<cmd>Noice telescope<CR>", "[N]oice [h]istory" },
+		["<leader>nd"] = { "<cmd>Noice dismiss<CR>", "[N]oice [d]ismiss" },
 
 		["<C-f>"] = {
 			function()
@@ -211,4 +303,182 @@ M.noice = {
 	},
 }
 
+-- Gitsigns (called from gitsigns on_attach)
+M.gitsigns = {
+	n = {
+		["]h"] = {
+			function()
+				require("gitsigns").next_hunk()
+			end,
+			"Next hunk",
+		},
+		["[h"] = {
+			function()
+				require("gitsigns").prev_hunk()
+			end,
+			"Prev hunk",
+		},
+		["<leader>gs"] = { ":Gitsigns stage_hunk<CR>", "Stage hunk" },
+		["<leader>gr"] = { ":Gitsigns reset_hunk<CR>", "Reset hunk" },
+		["<leader>gS"] = {
+			function()
+				require("gitsigns").stage_buffer()
+			end,
+			"Stage buffer",
+		},
+		["<leader>gu"] = {
+			function()
+				require("gitsigns").undo_stage_hunk()
+			end,
+			"Undo stage hunk",
+		},
+		["<leader>gR"] = {
+			function()
+				require("gitsigns").reset_buffer()
+			end,
+			"Reset buffer",
+		},
+		["<leader>gp"] = {
+			function()
+				require("gitsigns").preview_hunk_inline()
+			end,
+			"Preview hunk inline",
+		},
+		["<leader>gb"] = {
+			function()
+				require("gitsigns").blame_line({ full = true })
+			end,
+			"Blame line",
+		},
+		["<leader>gd"] = {
+			function()
+				require("gitsigns").diffthis()
+			end,
+			"Diff this",
+		},
+		["<leader>gD"] = {
+			function()
+				require("gitsigns").diffthis("~")
+			end,
+			"Diff this ~",
+		},
+	},
+	v = {
+		["<leader>gs"] = { ":Gitsigns stage_hunk<CR>", "Stage hunk" },
+		["<leader>gr"] = { ":Gitsigns reset_hunk<CR>", "Reset hunk" },
+	},
+	o = {
+		["ih"] = { ":<C-U>Gitsigns select_hunk<CR>", "GitSigns select hunk" },
+	},
+	x = {
+		["ih"] = { ":<C-U>Gitsigns select_hunk<CR>", "GitSigns select hunk" },
+	},
+}
+
+-- Telescope (called from telescope config)
+M.telescope = {
+	n = {
+		["<leader>sh"] = {
+			function()
+				require("telescope.builtin").help_tags()
+			end,
+			"[S]earch [H]elp",
+		},
+		["<leader>sk"] = {
+			function()
+				require("telescope.builtin").keymaps()
+			end,
+			"[S]earch [K]eymaps",
+		},
+		["<leader>sf"] = {
+			function()
+				require("telescope.builtin").find_files()
+			end,
+			"[S]earch [F]iles",
+		},
+		["<leader>ss"] = {
+			function()
+				require("telescope.builtin").builtin()
+			end,
+			"[S]earch [S]elect telescope",
+		},
+		["<leader>sw"] = {
+			function()
+				require("telescope.builtin").grep_string()
+			end,
+			"[S]earch current [W]ord",
+		},
+		["<leader>sg"] = {
+			function()
+				require("telescope.builtin").live_grep()
+			end,
+			"[S]earch by [G]rep",
+		},
+		["<leader>sd"] = {
+			function()
+				require("telescope.builtin").diagnostics()
+			end,
+			"[S]earch [D]iagnostics",
+		},
+		["<leader>sr"] = {
+			function()
+				require("telescope.builtin").resume()
+			end,
+			"[S]earch [R]esume",
+		},
+		["<leader>s."] = {
+			function()
+				require("telescope.builtin").oldfiles()
+			end,
+			"[S]earch Recent Files ('.' for repeat)",
+		},
+		["<leader><leader>"] = {
+			function()
+				require("telescope.builtin").buffers()
+			end,
+			"[ ] Find existing buffers",
+		},
+		["<leader>/"] = {
+			function()
+				require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
+					winblend = 10,
+					previewer = false,
+				}))
+			end,
+			"[/] Fuzzy search in current buffer",
+		},
+		["<leader>s/"] = {
+			function()
+				require("telescope.builtin").live_grep({
+					grep_open_files = true,
+					prompt_title = "Live Grep in Open Files",
+				})
+			end,
+			"[S]earch [/] in open files",
+		},
+	},
+}
+
+-- Undotree
+M.undotree = {
+	n = {
+		["<leader>tu"] = { "<cmd>UndotreeToggle<cr>", "[T]oggle [u]ndotree" },
+	},
+}
+
+-- Colorscheme (transparent)
+M.colorscheme = {
+	n = {
+		["<leader>tt"] = { "<cmd>TransparentToggle<CR>", "[T]oggle [T]ransparency" },
+	},
+}
+
+M.maven = {
+	n = {
+		["desc"] = { "Maven: " },
+
+		["<leader>Mm"] = { "<cmd>Maven<cr>", "Projects" },
+		["<leader>Mf"] = { "<cmd>MavenFavorites<cr>", "Favorite Commands" },
+	},
+}
 return M

@@ -1,9 +1,9 @@
 return {
 	{
 		"xiyaowong/transparent.nvim",
-		keys = {
-			{ "<leader>tt", "<cmd> TransparentToggle <CR>", mode = { "n" }, desc = "Transparency Toggle" },
-		},
+		config = function()
+			require("core.utils").load_mappings("colorscheme")
+		end,
 	},
 	{
 		"shaunsingh/nord.nvim",
