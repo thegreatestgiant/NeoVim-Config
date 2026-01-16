@@ -2,20 +2,6 @@
 return {
 	"lewis6991/gitsigns.nvim",
 	opts = {
-		signs = {
-			add = { text = "+" },
-			change = { text = "~" },
-			delete = { text = "_" },
-			topdelete = { text = "‾" },
-			changedelete = { text = "~" },
-		},
-		signs_staged = {
-			add = { text = "+" },
-			change = { text = "~" },
-			delete = { text = "_" },
-			topdelete = { text = "‾" },
-			changedelete = { text = "~" },
-		},
 		on_attach = function(buffer)
 			require("core.utils").load_mappings("gitsigns")
 			-- local gs = package.loaded.gitsigns

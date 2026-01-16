@@ -362,6 +362,18 @@ M.gitsigns = {
 			end,
 			"Diff this ~",
 		},
+		["<leader>tb"] = {
+			function()
+				require("gitsigns").toggle_current_line_blame()
+			end,
+			"[T]oggle git [b]lame",
+		},
+		["<leader>tw"] = {
+			function()
+				require("gitsigns").toggle_word_diff()
+			end,
+			"[T]oggle git [w]ord diff",
+		},
 	},
 	v = {
 		["<leader>gs"] = { ":Gitsigns stage_hunk<CR>", "Stage hunk" },
