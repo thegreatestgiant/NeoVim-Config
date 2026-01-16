@@ -75,7 +75,7 @@ return {
 			-- Disable providing hover info
 			client.server_capabilities.hoverProvider = false
 			-- Only format if this client can format
-			if not client.supports_method("textDocument/formatting") then
+			if not client:supports_method("textDocument/formatting") then
 				return
 			end
 
@@ -86,8 +86,9 @@ return {
 				buffer = bufnr,
 				callback = function()
 					local can_format = false
-					for _, c in ipairs(vim.lsp.get_active_clients({ bufnr = bufnr })) do
-						if c.supports_method("textDocument/formatting") then
+
+					for _, c in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+						if c:supports_method("textDocument/formatting") then
 							can_format = true
 							break
 						end
