@@ -101,7 +101,7 @@ M.diagnostic = {
 			"Next diagnostic",
 		},
 
-		["<leader>d"] = { vim.diagnostic.open_float, "Show diagnostic" },
+		["<leader>ld"] = { vim.diagnostic.open_float, "Show diagnostic" },
 	},
 }
 
@@ -503,6 +503,43 @@ M.terminal = {
 	t = {
 		-- Allow toggling out of terminal mode
 		["<C-\\>"] = { "<cmd>ToggleTerm<cr>", "Toggle terminal" },
+	},
+}
+
+-- Debug Adapter Protocol (DAP)
+M.dap = {
+	n = {
+		["<leader>db"] = { "<cmd>DapToggleBreakpoint<CR>", "Toggle Breakpoint" },
+		["<leader>dc"] = { "<cmd>DapContinue<CR>", "Continue" },
+		["<leader>di"] = { "<cmd>DapStepInto<CR>", "Step Into" },
+		["<leader>do"] = { "<cmd>DapStepOver<CR>", "Step Over" },
+		["<leader>dO"] = { "<cmd>DapStepOut<CR>", "Step Out" },
+		["<leader>dr"] = { "<cmd>DapToggleRepl<CR>", "Toggle REPL" },
+		["<leader>dt"] = { "<cmd>DapTerminate<CR>", "Terminate" },
+		["<leader>du"] = {
+			function()
+				require("dapui").toggle()
+			end,
+			"Toggle UI",
+		},
+	},
+}
+
+-- Python specific debug mappings
+M.dap_python = {
+	n = {
+		["<leader>dpr"] = {
+			function()
+				require("dap-python").test_method()
+			end,
+			"Test Method (Python)",
+		},
+		["<leader>dpc"] = {
+			function()
+				require("dap-python").test_class()
+			end,
+			"Test Class (Python)",
+		},
 	},
 }
 
