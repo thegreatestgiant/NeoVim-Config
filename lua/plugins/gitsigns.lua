@@ -2,6 +2,13 @@
 return {
 	"lewis6991/gitsigns.nvim",
 	opts = {
+		preview_config = {
+			border = "rounded",
+			style = "minimal",
+			relative = "cursor",
+			row = 0,
+			col = 1,
+		},
 		on_attach = function(buffer)
 			require("core.utils").load_mappings("gitsigns")
 			-- local gs = package.loaded.gitsigns
