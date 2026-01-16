@@ -11,6 +11,7 @@ M._global_sections = {
 	"diagnostic",
 	"misc",
 	"maven",
+	"terminal",
 }
 
 ---------------------------------------------------------------------
@@ -493,4 +494,16 @@ M.maven = {
 		["<leader>Mf"] = { "<cmd>MavenFavorites<cr>", "Favorite Commands" },
 	},
 }
+
+M.terminal = {
+	n = {
+		["<leader>gg"] = { "<cmd>Lazygit<cr>", "Lazygit" },
+		["<C-\\>"] = { "<cmd>ToggleTerm<cr>", "Toggle terminal" },
+	},
+	t = {
+		-- Allow toggling out of terminal mode
+		["<C-\\>"] = { "<cmd>ToggleTerm<cr>", "Toggle terminal" },
+	},
+}
+
 return M

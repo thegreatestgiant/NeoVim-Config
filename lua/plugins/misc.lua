@@ -20,10 +20,44 @@ return {
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
+		cmd = { "ToggleTerm", "Lazygit" },
 		opts = {
-			open_mapping = [[<c-\>]],
 			direction = "float",
 		},
+		config = function(_, opts)
+			require("toggleterm").setup(opts)
+
+			-- Define the custom Lazygit terminal
+			local Terminal = require("toggleterm.terminal").Terminal
+			local lazygit = Terminal:new({
+				cmd = "lazygit",
+				hidden = true,
+				direction = "float",
+				float_opts = {
+					border = "rounded",
+				},
+				-- function to run on opening the terminal
+				on_open = function(term)
+					vim.cmd("startinsert!")
+					-- Optional: Unmap <C-\> inside lazygit so it doesn't close the terminal immediately
+					-- vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", {noremap = true, silent = true})
+				end,
+				-- function to run on closing the terminal
+				on_close = function(term)
+					vim.cmd("startinsert!")
+				end,
+			})
+
+			-- Create a Lua function to toggle it
+			function _lazygit_toggle()
+				lazygit:toggle()
+			end
+
+			-- Create a User Command ':Lazygit' that calls the function
+			vim.api.nvim_create_user_command("Lazygit", function()
+				_lazygit_toggle()
+			end, {})
+		end,
 	},
 	{
 		"mbbill/undotree",
