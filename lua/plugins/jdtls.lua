@@ -6,12 +6,8 @@ local M = {
 function M.setup()
 	local jdtls = require("jdtls")
 
-	-- FIX: Get standard capabilities (for cmp, snippets, etc.)
 	local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-	--------------------------------------------------------------------
-	-- ROOT DETECTION (correct + no hardcoding)
-	--------------------------------------------------------------------
 	local function find_root()
 		local cwd = vim.fn.getcwd()
 		if vim.fn.isdirectory(cwd .. "/edu") == 1 then
@@ -25,22 +21,28 @@ function M.setup()
 	end
 
 	local root_dir = find_root()
-
-	--------------------------------------------------------------------
-	-- WORKSPACE DIR
-	--------------------------------------------------------------------
 	local project_name = vim.fn.fnamemodify(root_dir, ":p:h:t")
 	local workspace_dir = vim.fn.stdpath("data") .. "/jdtls-workspace/" .. project_name
-
-	--------------------------------------------------------------------
-	-- MASON JDTLS
-	--------------------------------------------------------------------
 	local mason_path = vim.fn.stdpath("data") .. "/mason/packages/jdtls"
+
+	local mason_packages = vim.fn.stdpath("data") .. "/mason/packages"
+
+	local jdtls_path = mason_packages .. "/jdtls"
+	local java_debug_path = mason_packages .. "/java-debug-adapter"
+	local java_test_path = mason_packages .. "/java-test"
+
 	local launcher = vim.fn.glob(mason_path .. "/plugins/org.eclipse.equinox.launcher_*.jar")
 
-	--------------------------------------------------------------------
-	-- COMMAND
-	--------------------------------------------------------------------
+	local bundles = {}
+
+	local debug_jar = vim.fn.glob(java_debug_path .. "/extension/server/com.microsoft.java.debug.plugin-*.jar", true)
+	if debug_jar ~= "" then
+		table.insert(bundles, debug_jar)
+	end
+
+	-- note: we use java_test_path variable we created above
+	vim.list_extend(bundles, vim.split(vim.fn.glob(java_test_path .. "/extension/server/*.jar", true), "\n"))
+
 	local cmd = {
 		"java",
 		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
@@ -62,9 +64,6 @@ function M.setup()
 		workspace_dir,
 	}
 
-	--------------------------------------------------------------------
-	-- CONFIG
-	--------------------------------------------------------------------
 	local config = {
 		cmd = cmd,
 		root_dir = root_dir,
@@ -81,7 +80,10 @@ function M.setup()
 			},
 		},
 
-		-- FIX: register proper source paths AFTER startup
+		init_options = {
+			bundles = bundles,
+		},
+
 		on_init = function(client, _)
 			client.notify("workspace/didChangeConfiguration", {
 				settings = {
@@ -98,12 +100,13 @@ function M.setup()
 			})
 		end,
 
-		init_options = { bundles = {} },
+		-- ATTACH DAP MAPPINGS AFTER START
+		on_attach = function(client, bufnr)
+			require("jdtls").setup_dap({ hotcodereplace = "auto" })
+			require("core.utils").load_mappings("dap_java")
+		end,
 	}
 
-	--------------------------------------------------------------------
-	-- FIX: stop RPC errors / workspace execute command spam
-	--------------------------------------------------------------------
 	vim.lsp.handlers["workspace/executeClientCommand"] = function(_, res)
 		return res or {}
 	end

@@ -17,6 +17,8 @@ return {
 				automatic_installation = true,
 				ensure_installed = {
 					"python",
+					"javadbg",
+					"javatest",
 				},
 			})
 			dapui.setup()

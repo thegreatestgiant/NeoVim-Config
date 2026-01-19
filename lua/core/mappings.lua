@@ -543,4 +543,27 @@ M.dap_python = {
 	},
 }
 
+M.dap_java = {
+	n = {
+		["<leader>djc"] = {
+			function()
+				require("jdtls").test_class()
+			end,
+			"Test Class (Java)",
+		},
+		["<leader>djm"] = {
+			function()
+				require("jdtls").test_nearest_method()
+			end,
+			"Test Method (Java)",
+		},
+		["<leader>djp"] = {
+			function()
+				require("jdtls.dap").pick_test()
+			end,
+			"Pick Test (Java)",
+		},
+	},
+}
+
 return M
