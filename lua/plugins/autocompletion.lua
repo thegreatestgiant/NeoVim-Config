@@ -69,29 +69,37 @@ return { -- Autocompletion
 			--
 			-- No, but seriously. Please read `:help ins-completion`, it is really good!
 			mapping = cmp.mapping.preset.insert({
-				-- Scroll the documentation window [b]ack / [f]orward
+				-- Keep your doc scrolling mappings
 				["<C-b>"] = cmp.mapping.scroll_docs(-4),
 				["<C-f>"] = cmp.mapping.scroll_docs(4),
-
-				-- If you prefer more traditional completion keymaps,
-				-- you can uncomment the following lines
-				["<CR>"] = cmp.mapping.confirm({ select = true }),
-				["<Tab>"] = cmp.mapping.select_next_item(),
-				["<S-Tab>"] = cmp.mapping.select_prev_item(),
-
-				-- Manually trigger a completion from nvim-cmp.
-				--  Generally you don't need this, because nvim-cmp will display
-				--  completions whenever it has completion options available.
 				["<C-Space>"] = cmp.mapping.complete({}),
+				["<CR>"] = cmp.mapping.confirm({ select = true }),
 
-				-- Think of <c-l> as moving to the right of your snippet expansion.
-				--  So if you have a snippet that's like:
-				--  function $name($args)
-				--    $body
-				--  end
-				--
-				-- <c-l> will move you to the right of each of the expansion locations.
-				-- <c-h> is similar, except moving you backwards.
+				-- SUPER TAB LOGIC
+				["<Tab>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						-- 1. If menu is visible, select next item
+						cmp.select_next_item()
+					elseif luasnip.expand_or_locally_jumpable() then
+						-- 2. If in a snippet, jump to next placeholder
+						luasnip.expand_or_jump()
+					else
+						-- 3. Otherwise, fallback to standard behavior (insert tab)
+						fallback()
+					end
+				end, { "i", "s" }),
+
+				["<S-Tab>"] = cmp.mapping(function(fallback)
+					if cmp.visible() then
+						cmp.select_prev_item()
+					elseif luasnip.locally_jumpable(-1) then
+						luasnip.jump(-1)
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
+
+				-- You can keep <C-l> as a backup or remove it!
 				["<C-l>"] = cmp.mapping(function()
 					if luasnip.expand_or_locally_jumpable() then
 						luasnip.expand_or_jump()
