@@ -21,6 +21,9 @@ return {
 				"alex",
 				"markdownlint",
 				"ruff",
+				"gofumpt",
+				"goimports",
+				"staticcheck",
 			},
 			automatic_installation = true,
 		})
@@ -50,11 +53,8 @@ return {
 			diagnostics.checkmake,
 
 			-- Formatters
-			formatting.gofmt,
 			formatting.gofumpt,
 			formatting.goimports,
-			formatting.goimports_reviser,
-			formatting.golines,
 			formatting.markdownlint,
 			formatting.prettier.with({ filetypes = { "json", "yaml" } }),
 			formatting.clang_format,

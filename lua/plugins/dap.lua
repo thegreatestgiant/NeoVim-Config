@@ -7,11 +7,13 @@ return {
 			"mason-org/mason.nvim",
 			"jay-babu/mason-nvim-dap.nvim",
 			"mfussenegger/nvim-dap-python",
+			"leoluz/nvim-dap-go",
 		},
 		config = function()
 			local dap = require("dap")
 			local dapui = require("dapui")
 			local dappy = require("dap-python")
+			local delve = require("dap-go")
 
 			require("mason-nvim-dap").setup({
 				automatic_installation = true,
@@ -19,9 +21,13 @@ return {
 					"python",
 					"javadbg",
 					"javatest",
+					"delve",
 				},
 			})
+
+			delve.setup()
 			dapui.setup()
+
 			dap.listeners.before.attach.dapui_config = function()
 				dapui.open()
 			end

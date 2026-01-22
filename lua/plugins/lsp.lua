@@ -160,6 +160,17 @@ return {
 			clangd = {
 				filetypes = { "c", "cpp", "objc", "objcpp" }, -- Ensure this is restrictive
 			},
+			gopls = {
+				settings = {
+					gopls = {
+						completeUnimported = true,
+						usePlaceholders = true,
+						analyses = {
+							unusedparams = true,
+						},
+					},
+				},
+			},
 		}
 
 		-- Ensure the servers and tools above are installed
@@ -170,6 +181,7 @@ return {
 			"clang-format",
 			"pyright",
 			"ruff",
+			"gopls",
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
