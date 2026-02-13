@@ -43,6 +43,7 @@ require("lazy").setup({
 	require("plugins.jdtls"),
 	require("plugins.maven"),
 	require("plugins.dap"),
+	require("plugins.autotag"),
 })
 
 -- 3. Load Mappings (NOW SAFE to call after plugins)

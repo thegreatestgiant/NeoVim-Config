@@ -16,6 +16,10 @@ return {
 	},
 	build = ":TSUpdate",
 	config = function()
+		-- Check Neovim version
+		local nvim_version = vim.version()
+		local is_nvim_010_or_higher = nvim_version.major > 0 or (nvim_version.major == 0 and nvim_version.minor >= 10)
+
 		-- ========================================================================
 		-- STEP 1: INSTALL PARSERS
 		-- ========================================================================
@@ -38,6 +42,7 @@ return {
 			"toml",
 			"vim",
 			"vimdoc",
+			"xml",
 			"yaml",
 		}
 
@@ -63,6 +68,7 @@ return {
 			"python",
 			"vim",
 			"toml",
+			"xml",
 			"yaml",
 		}
 
@@ -83,8 +89,20 @@ return {
 					vim.wo.foldmethod = "expr"
 					vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 
-					-- Enable treesitter-based indentation
-					vim.bo[bufnr].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+					local ft = vim.bo[bufnr].filetype
+					local lang = vim.treesitter.language.get_lang(ft)
+
+					if lang then
+						local has_indent = pcall(vim.treesitter.query.get, lang, "indents")
+						if has_indent then
+							-- CRITICAL: Set indentexpr for treesitter
+							vim.bo[bufnr].indentexpr = "v:lua.vim.treesitter.indentexpr()"
+
+							-- IMPORTANT: Disable conflicting indent methods
+							vim.bo[bufnr].smartindent = false
+							vim.bo[bufnr].cindent = false
+						end
+					end
 				end
 			end,
 		})
