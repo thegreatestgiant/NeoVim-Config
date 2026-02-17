@@ -19,7 +19,7 @@ return {
 		end,
 		opts = {
 			close_if_last_window = true,
-			enable_cursor_hijack = true,
+			-- enable_cursor_hijack = true,
 			filesystem = {
 				filtered_items = {
 					visible = true,
