@@ -1,5 +1,8 @@
 return {
 	"folke/persistence.nvim",
 	event = "BufReadPre",
-	opts = { options = vim.opt.sessionoptions:get() },
+	opts = {
+		-- We explicitly list what to save, but we leave out "terminal"
+		options = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp" },
+	},
 }
