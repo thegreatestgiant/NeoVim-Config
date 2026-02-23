@@ -78,6 +78,15 @@ return {
 		vim.opt.foldcolumn = "1"
 		vim.opt.foldlevel = 99
 		vim.opt.foldlevelstart = 99
+
+		-- indenting
+		vim.api.nvim_create_autocmd("FileType", {
+			callback = function()
+				if vim.bo.indentexpr ~= "" then
+					vim.opt_local.autoindent = true
+				end
+			end,
+		})
 		vim.opt.foldenable = true
 	end,
 }
