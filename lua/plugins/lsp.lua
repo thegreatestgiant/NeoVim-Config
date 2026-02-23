@@ -178,16 +178,37 @@ return {
 					"javascript",
 					"javascriptreact",
 				},
+
 				settings = {
 					vtsls = {
 						autoUseWorkspaceTsdk = true,
+						enableMoveToFileCodeAction = true,
+						experimental = {
+							completion = {
+								enableServerSideFuzzyMatch = true,
+							},
+						},
 					},
+
 					typescript = {
+						updateImportsOnFileMove = { enabled = "always" },
 						suggest = {
 							completeFunctionCalls = true,
 						},
+						inlayHints = {
+							enumMemberValues = { enabled = true },
+							functionLikeReturnTypes = { enabled = true },
+							parameterNames = { enabled = "literals" },
+							parameterTypes = { enabled = true },
+							propertyDeclarationTypes = { enabled = true },
+						},
 					},
 				},
+
+				on_attach = function(client)
+					client.server_capabilities.documentFormattingProvider = false
+					client.server_capabilities.documentRangeFormattingProvider = false
+				end,
 			},
 			cssls = {},
 			html = {},

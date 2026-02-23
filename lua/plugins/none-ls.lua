@@ -1,5 +1,6 @@
 return {
 	"nvimtools/none-ls.nvim",
+	event = "LspAttach",
 	dependencies = {
 		"nvimtools/none-ls-extras.nvim",
 		"jayp0521/mason-null-ls.nvim",
@@ -74,6 +75,7 @@ return {
 			formatting.clang_format,
 			formatting.shfmt.with({ args = { "-i", "4" } }),
 
+			require("none-ls.formatting.eslint_d"),
 			-- Ruff
 			require("none-ls.formatting.ruff").with({ extra_args = { "--extend-select", "I" } }),
 			require("none-ls.formatting.ruff_format"),
@@ -130,9 +132,11 @@ return {
 		--------------------------------------------------------------------------
 		-- Setup null-ls
 		--------------------------------------------------------------------------
-		null_ls.setup({
-			sources = sources,
-			on_attach = setup_format_on_save,
-		})
+		vim.schedule(function()
+			null_ls.setup({
+				sources = sources,
+				on_attach = setup_format_on_save,
+			})
+		end)
 	end,
 }
