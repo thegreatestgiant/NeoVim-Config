@@ -36,6 +36,7 @@ M.general = {
 	},
 
 	v = {
+		["<C-s>"] = { "<Esc><cmd>w<CR>", "Save file" },
 		["<leader>"] = { "<Nop>", "Leader noop" },
 	},
 }

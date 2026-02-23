@@ -16,6 +16,9 @@ return {
 		require("mason-null-ls").setup({
 			ensure_installed = {
 				"prettier",
+				"eslint_d",
+				"commitlint", -- Add this!
+				"yamllint",
 				"shfmt",
 				"clang_format",
 				"alex",
@@ -32,6 +35,7 @@ return {
 		-- Sources (your original list preserved)
 		--------------------------------------------------------------------------
 		local sources = {
+			require("none-ls.diagnostics.eslint_d"),
 			-- Lua
 			formatting.stylua,
 
@@ -46,6 +50,7 @@ return {
 			diagnostics.actionlint,
 			diagnostics.alex,
 			diagnostics.ansiblelint,
+			diagnostics.eslint_d,
 			diagnostics.commitlint,
 			diagnostics.markdownlint,
 			diagnostics.staticcheck,
@@ -56,7 +61,18 @@ return {
 			formatting.gofumpt,
 			formatting.goimports,
 			formatting.markdownlint,
-			formatting.prettier.with({ filetypes = { "json", "yaml" } }),
+			formatting.prettier.with({
+				filetypes = {
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
+					"json",
+					"yaml",
+					"html",
+					"css",
+				},
+			}),
 			formatting.clang_format,
 			formatting.shfmt.with({ args = { "-i", "4" } }),
 

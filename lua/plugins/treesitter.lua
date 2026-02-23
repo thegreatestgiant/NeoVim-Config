@@ -40,6 +40,8 @@ return {
 			"python",
 			"regex",
 			"toml",
+			"typescript",
+			"tsx",
 			"vim",
 			"vimdoc",
 			"xml",
@@ -68,6 +70,8 @@ return {
 			"python",
 			"vim",
 			"toml",
+			"typescript",
+			"typescriptreact",
 			"xml",
 			"yaml",
 		}

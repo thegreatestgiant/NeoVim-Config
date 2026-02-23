@@ -171,6 +171,17 @@ return {
 					},
 				},
 			},
+			vtsls = {
+				settings = {
+					typescript = {
+						suggest = {
+							completeFunctionCalls = true,
+						},
+					},
+				},
+			},
+			cssls = {},
+			html = {},
 		}
 
 		-- Ensure the servers and tools above are installed
@@ -183,6 +194,8 @@ return {
 			"ruff",
 			"gopls",
 			"jdtls",
+			"vtsls", -- Added this
+			"eslint_d",
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
