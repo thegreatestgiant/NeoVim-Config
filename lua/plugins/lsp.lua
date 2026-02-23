@@ -172,7 +172,16 @@ return {
 				},
 			},
 			vtsls = {
+				filetypes = {
+					"typescript",
+					"typescriptreact",
+					"javascript",
+					"javascriptreact",
+				},
 				settings = {
+					vtsls = {
+						autoUseWorkspaceTsdk = true,
+					},
 					typescript = {
 						suggest = {
 							completeFunctionCalls = true,

@@ -35,22 +35,20 @@ return {
 		-- Sources (your original list preserved)
 		--------------------------------------------------------------------------
 		local sources = {
-			require("none-ls.diagnostics.eslint_d"),
 			-- Lua
 			formatting.stylua,
 
 			-- Basic utilities
 			null_ls.builtins.completion.spell,
+			null_ls.builtins.code_actions.impl,
 			null_ls.builtins.code_actions.gitsigns,
 			null_ls.builtins.code_actions.gomodifytags,
-			null_ls.builtins.code_actions.impl,
 			null_ls.builtins.completion.luasnip,
 
 			-- Diagnostics
 			diagnostics.actionlint,
 			diagnostics.alex,
 			diagnostics.ansiblelint,
-			diagnostics.eslint_d,
 			diagnostics.commitlint,
 			diagnostics.markdownlint,
 			diagnostics.staticcheck,
