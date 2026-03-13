@@ -206,7 +206,7 @@ M.lsp = {
 			"Hover documentation",
 		},
 		-- C-k is for signature help (shows function parameters)
-		["<C-k>"] = {
+		["gK"] = {
 			function()
 				vim.lsp.buf.signature_help()
 			end,

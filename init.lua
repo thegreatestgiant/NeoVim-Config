@@ -55,7 +55,8 @@ require("core.utils").load_mappings("all_globals")
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "java",
 	callback = function()
-		-- Safety check: ensure plugin module exists before calling setup
+		vim.b.sleuth_automatic = 0
+
 		local ok, jdtls = pcall(require, "plugins.jdtls")
 		if ok then
 			jdtls.setup()
