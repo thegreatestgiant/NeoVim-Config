@@ -34,6 +34,6 @@ RUN nvim --headless "+Lazy! sync" +qa || true
 RUN timeout 45s nvim --headless -c "MasonToolsInstall" || true
 RUN nvim --headless -c "sleep 60" -c "qa"
 RUN nvim --headless "+MasonUpdate" +qa
-RUN nvim --headless "+MasonToolsInstallSync" +qa
+RUN timeout 45s nvim --headless "+MasonToolsInstallSync" +qa
 
 ENTRYPOINT ["nvim"]
