@@ -39,7 +39,7 @@
 
 - **gitsigns** (Git decorations)
 - **vim-fugitive** (Git wrapper)
-- **vim-rhubarb** (Github integration)
+- **vim-rhubarb** (GitHub integration for vim-fugitive)
 
 ### 🛠️ Utilities
 
@@ -50,7 +50,7 @@
 
 ## Required tools for this to work
 
-> **Tip:** If you don't want to install any of these, see the [Docker section](#docker) to run this config in a fully pre-configured container.
+> **Tip:** If you don't want to install any of these, see the [Docker section](#docker--automated-builds) to run this config in a fully pre-configured container.
 
 | Tool | Min Version | Why it's needed |
 |---|---|---|
@@ -69,7 +69,7 @@
 | **Nerd Font** | any | Icon rendering in `neo-tree`, `lualine`, `bufferline`, and `dashboard` |
 | **tree-sitter-cli** | any | Compiling custom Tree-sitter grammars |
 
-Install the Node.js globals with:
+> **Note:** If you are not using the Docker image, install the Node.js globals manually with:
 ```sh
 npm install -g tree-sitter-cli
 ```
@@ -92,14 +92,13 @@ docker pull thegreatestgiant/nvim:latest
 # Run with your current directory mounted
 docker run -it --rm \
   -v "$(pwd)":/workspace \
-  thegreatestgiant/nvim
+  thegreatestgiant/nvim:latest
 ```
 
 Everything is already installed inside the image. The first time you open Neovim this way, it's ready to go — no `:MasonInstall`, no `:TSUpdate`, no plugin sync prompts.
 
 ## How to use on your server
-
-```git
+```sh
 git clone https://github.com/thegreatestgiant/NeoVim-Config.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
 ```
 
