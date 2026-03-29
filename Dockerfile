@@ -1,4 +1,4 @@
-FROM ubuntu:jammy-slim
+FROM ubuntu:jammy
 
 RUN apt update && apt install -y git gcc make python3  ripgrep unzip tar curl openjdk-21-jdk wget python3-venv
 
