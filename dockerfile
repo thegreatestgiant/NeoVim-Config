@@ -33,7 +33,7 @@ ENV PATH="/opt/nvim-linux-x86_64/bin:${PATH}"
 RUN nvim --headless "+Lazy! sync" +qa || true
 RUN timeout 45s nvim --headless -c "MasonToolsInstall" || true
 RUN nvim --headless -c "sleep 60" -c "qa"
-RUN nvim --headless "+MasonUpdate" +qa
+RUN timeout 45s nvim --headless "+MasonUpdate" +qa || true
 RUN timeout 45s nvim --headless "+MasonToolsInstallSync" +qa || true
 
 ENTRYPOINT ["nvim"]
