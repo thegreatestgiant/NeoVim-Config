@@ -51,6 +51,7 @@ return {
 					{ "<leader>l", group = "LSP" },
 					{ "<leader>M", group = "Maven" },
 					{ "<leader>n", group = "Noice/Notifications" },
+					{ "<leader>o", group = "Oil" },
 					{ "<leader>q", group = "Quit" },
 					{ "<leader>s", group = "Search (Telescope)" },
 					{ "<leader>t", group = "Toggle" },

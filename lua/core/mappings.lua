@@ -567,4 +567,23 @@ M.dap_java = {
 	},
 }
 
+M.oil = {
+	n = {
+		["-"] = {
+			"<CMD>Oil<CR>",
+			"Open parent directory (Oil)",
+		},
+		["<leader>oo"] = {
+			"<CMD>Oil<CR>",
+			"[O]pen Oil (current dir)",
+		},
+		["<leader>of"] = {
+			function()
+				require("oil").toggle_float()
+			end,
+			"[O]il [f]loat",
+		},
+	},
+}
+
 return M
