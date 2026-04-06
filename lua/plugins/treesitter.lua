@@ -39,6 +39,7 @@ return {
 				"markdown_inline",
 				"python",
 				"regex",
+				"sql",
 				"toml",
 				"typescript",
 				"tsx",

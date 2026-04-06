@@ -61,7 +61,9 @@ return {
 			formatting.gofumpt,
 			formatting.goimports,
 			formatting.markdownlint,
-			formatting.sqlformatter,
+			formatting.sql_formatter.with({
+				extra_args = { "--config", '{"keywordCase": "upper", "dataTypeCase": "upper"}' },
+			}),
 			formatting.prettier.with({
 				filetypes = {
 					"javascript",
