@@ -16,13 +16,14 @@ return {
 		--------------------------------------------------------------------------
 		require("mason-null-ls").setup({
 			ensure_installed = {
-				"prettier",
+				"alex",
+				"clang_format",
+				"commitlint",
 				"eslint_d",
-				"commitlint", -- Add this!
+				"prettier",
 				"yamllint",
 				"shfmt",
-				"clang_format",
-				"alex",
+				"sql-formatter",
 				"markdownlint",
 				"ruff",
 				"gofumpt",
@@ -60,6 +61,7 @@ return {
 			formatting.gofumpt,
 			formatting.goimports,
 			formatting.markdownlint,
+			formatting.sqlformatter,
 			formatting.prettier.with({
 				filetypes = {
 					"javascript",

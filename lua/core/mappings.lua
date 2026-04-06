@@ -438,7 +438,13 @@ M.telescope = {
 			function()
 				require("telescope.builtin").resume()
 			end,
-			"[S]earch [R]esume",
+			"[S]earch [r]esume",
+		},
+		["<leader>sR"] = {
+			function()
+				require("telescope.builtin").registers()
+			end,
+			"[S]earch [R]egisters",
 		},
 		["<leader>s."] = {
 			function()

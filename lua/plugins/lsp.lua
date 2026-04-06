@@ -220,11 +220,14 @@ return {
 			"stylua",
 			"clangd",
 			"clang-format",
+			"dockerls",
+			"docker-compose-language-service",
 			"pyright",
 			"ruff",
+			"sqlls",
 			"gopls",
 			"jdtls",
-			"vtsls", -- Added this
+			"vtsls",
 			"eslint_d",
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
