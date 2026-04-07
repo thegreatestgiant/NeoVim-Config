@@ -45,6 +45,7 @@ require("lazy").setup({
 	require("plugins.dap"),
 	require("plugins.autotag"),
 	require("plugins.oil"),
+	require("plugins.dadbod"),
 })
 
 -- 3. Load Mappings (NOW SAFE to call after plugins)
