@@ -20,9 +20,6 @@ return {
 			-- Show query results in a horizontal split below the query buffer
 			vim.g.db_ui_show_help = 0
 		end,
-		config = function()
-			require("core.utils").load_mappings("dadbod")
-		end,
 	},
 	{
 		"kristijanhusak/vim-dadbod-completion",
