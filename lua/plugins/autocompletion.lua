@@ -23,6 +23,7 @@ return { -- Autocompletion
 		"hrsh7th/cmp-nvim-lsp",
 		"hrsh7th/cmp-buffer",
 		"hrsh7th/cmp-path",
+		"kristijanhusak/vim-dadbod-completion",
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -56,6 +57,12 @@ return { -- Autocompletion
 			Operator = "󰆕",
 			TypeParameter = "󰊄",
 		}
+		cmp.setup.filetype({ "sql" }, {
+			sources = {
+				{ name = "kristijanhusak/vim-dadbod-completion" },
+				{ name = "buffer" },
+			},
+		})
 		cmp.setup({
 			snippet = {
 				expand = function(args)

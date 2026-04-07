@@ -592,4 +592,12 @@ M.oil = {
 	},
 }
 
+M.dadbod = {
+	n = {
+		["<leader>Du"] = { "<cmd>DBUIToggle<CR>", "[D]B [U]I toggle" },
+		["<leader>Da"] = { "<cmd>DBUIAddConnection<CR>", "[D]B [A]dd connection" },
+		["<leader>Df"] = { "<cmd>DBUIFindBuffer<CR>", "[D]B [F]ind buffer" },
+	},
+}
+
 return M

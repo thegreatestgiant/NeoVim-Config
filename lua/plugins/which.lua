@@ -47,6 +47,7 @@ return {
 
 				spec = {
 					{ "<leader>d", group = "Debug" },
+					{ "<leader>D", group = "Database" },
 					{ "<leader>g", group = "Git" },
 					{ "<leader>l", group = "LSP" },
 					{ "<leader>M", group = "Maven" },

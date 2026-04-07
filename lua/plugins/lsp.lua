@@ -210,13 +210,13 @@ return {
 					client.server_capabilities.documentRangeFormattingProvider = false
 				end,
 			},
-			cssls = {},
-			html = {},
 		}
 
 		-- Ensure the servers and tools above are installed
 		local ensure_installed = vim.tbl_keys(servers or {})
 		vim.list_extend(ensure_installed, {
+			"cssls",
+			"html",
 			"stylua",
 			"clangd",
 			"clang-format",
@@ -224,7 +224,7 @@ return {
 			"docker-compose-language-service",
 			"pyright",
 			"ruff",
-			"sqlls",
+			"postgres_lsp",
 			"gopls",
 			"jdtls",
 			"vtsls",
