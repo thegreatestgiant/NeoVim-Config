@@ -168,6 +168,46 @@ M.lsp = {
 			end,
 			"Workspace [S]ymbols",
 		},
+		["<leader>lc"] = {
+			function()
+				local params = vim.lsp.util.make_position_params()
+
+				-- Ask the LSP directly for the symbols
+				vim.lsp.buf_request(0, "textDocument/documentSymbol", params, function(err, result)
+					if err or not result then
+						vim.notify("No symbols found or LSP error", vim.log.levels.WARN)
+						return
+					end
+
+					local symbols = {}
+
+					-- Recursive function to dig into nested symbols (like methods inside a class)
+					local function extract_symbols(items)
+						for _, item in ipairs(items) do
+							table.insert(symbols, item.name)
+							-- If the symbol has children, extract those too
+							if item.children then
+								extract_symbols(item.children)
+							end
+						end
+					end
+
+					extract_symbols(result)
+
+					if #symbols == 0 then
+						vim.notify("No symbols to copy", vim.log.levels.WARN)
+						return
+					end
+
+					-- Send to Wayland clipboard
+					local output = table.concat(symbols, "\n")
+					vim.fn.system({ "wl-copy" }, output)
+
+					vim.notify("Copied " .. #symbols .. " symbols to wl-copy", vim.log.levels.INFO)
+				end)
+			end,
+			"Copy all document symbols to clipboard",
+		},
 		["<leader>lh"] = {
 			function()
 				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }))

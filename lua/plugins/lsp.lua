@@ -210,13 +210,22 @@ return {
 					client.server_capabilities.documentRangeFormattingProvider = false
 				end,
 			},
+			cssls = {},
+			html = {},
+			dockerls = {},
+			postgres_lsp = {
+				filetypes = { "sql" },
+				root_dir = function(fname)
+					-- Guarantees the LSP attaches even if it gets confused about the project root
+					return require("lspconfig.util").root_pattern(".git", "docker-compose.yml")(fname)
+						or vim.fn.getcwd()
+				end,
+			},
 		}
 
 		-- Ensure the servers and tools above are installed
 		local ensure_installed = vim.tbl_keys(servers or {})
 		vim.list_extend(ensure_installed, {
-			"cssls",
-			"html",
 			"stylua",
 			"clangd",
 			"clang-format",
