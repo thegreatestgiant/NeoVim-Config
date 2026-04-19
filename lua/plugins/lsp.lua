@@ -3,7 +3,7 @@ return {
 	dependencies = {
 		{ "mason-org/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
 
-		{ "mason-org/mason-lspconfig.nvim", opts = { automatic_enable = { exclude = { "jdtls" } } } },
+		{ "mason-org/mason-lspconfig.nvim", opts = { automatic_enable = { exclude = { "jdtls", "sqlls" } } } },
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		{
 			"j-hui/fidget.nvim",
@@ -215,11 +215,16 @@ return {
 			dockerls = {},
 			postgres_lsp = {
 				filetypes = { "sql" },
+				workspace_required = false, -- ← this is the critical fix
 				root_dir = function(fname)
-					-- Guarantees the LSP attaches even if it gets confused about the project root
-					return require("lspconfig.util").root_pattern(".git", "docker-compose.yml")(fname)
+					return require("lspconfig.util").root_pattern(".git", "docker-compose.yml", ".pgsql")(fname)
 						or vim.fn.getcwd()
 				end,
+				settings = {
+					postgres_lsp = {
+						database_url = os.getenv("DB_DEV_URL") or "postgresql://user:password@localhost:5432/mydb",
+					},
+				},
 			},
 		}
 

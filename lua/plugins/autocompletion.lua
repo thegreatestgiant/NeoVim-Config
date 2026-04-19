@@ -59,8 +59,9 @@ return { -- Autocompletion
 		}
 		cmp.setup.filetype({ "sql" }, {
 			sources = {
-				{ name = "kristijanhusak/vim-dadbod-completion" },
-				{ name = "buffer" },
+				{ name = "vim-dadbod-completion", priority = 1000 },
+				{ name = "nvim_lsp", priority = 900 },
+				{ name = "buffer", priority = 500 },
 			},
 		})
 		cmp.setup({

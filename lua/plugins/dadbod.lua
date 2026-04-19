@@ -23,7 +23,7 @@ return {
 	},
 	{
 		"kristijanhusak/vim-dadbod-completion",
-		ft = { "sql", "mysql", "plsql" },
-		lazy = true,
+		dependencies = { "tpope/vim-dadbod" },
+		lazy = true, -- loaded by vim-dadbod-ui as a dependency
 	},
 }
