@@ -635,7 +635,13 @@ M.oil = {
 
 M.dadbod = {
 	n = {
-		["<leader>Du"] = { "<cmd>DBUIToggle<CR>", "[D]B [U]I toggle" },
+		["<leader>Du"] = {
+			function()
+				vim.g.db_ui_tmp_query_location = vim.fn.getcwd()
+				vim.cmd("DBUIToggle")
+			end,
+			"[D]B [U]I toggle",
+		},
 		["<leader>Da"] = { "<cmd>DBUIAddConnection<CR>", "[D]B [A]dd connection" },
 		["<leader>Df"] = { "<cmd>DBUIFindBuffer<CR>", "[D]B [F]ind buffer" },
 	},

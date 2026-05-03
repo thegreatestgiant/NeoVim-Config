@@ -19,6 +19,7 @@ return {
 			vim.g.db_ui_winwidth = 40
 			-- Show query results in a horizontal split below the query buffer
 			vim.g.db_ui_show_help = 0
+			vim.g.db_ui_tmp_query_location = vim.fn.getcwd()
 		end,
 	},
 	{
