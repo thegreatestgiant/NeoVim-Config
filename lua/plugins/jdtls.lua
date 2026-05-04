@@ -43,8 +43,23 @@ function M.setup()
 	-- note: we use java_test_path variable we created above
 	vim.list_extend(bundles, vim.split(vim.fn.glob(java_test_path .. "/extension/server/*.jar", true), "\n"))
 
+	-- --- NEW CROSS-PLATFORM JAVA RESOLUTION ---
+	local java_cmd = "java" -- Default fallback to PATH
+
+	local arch_java = "/usr/lib/jvm/default/bin/java"
+	local sdkman_java = vim.fn.expand("~/.sdkman/candidates/java/current/bin/java")
+
+	-- Check which Java executable is actually present on this specific machine
+	if vim.fn.executable(arch_java) == 1 then
+		java_cmd = arch_java
+	elseif vim.fn.executable(sdkman_java) == 1 then
+		java_cmd = sdkman_java
+	end
+	-- ------------------------------------------
+
 	local cmd = {
-		"/home/sean/.sdkman/candidates/java/current/bin/java",
+		-- "/home/sean/.sdkman/candidates/java/current/bin/java",
+		java_cmd,
 		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
 		"-Dosgi.bundles.defaultStartLevel=4",
 		"-Declipse.product=org.eclipse.jdt.ls.core.product",
