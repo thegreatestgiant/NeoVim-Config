@@ -1,5 +1,5 @@
 require("core.options")
-vim.env.SSH_AUTH_SOCK = "/home/sean/.ssh/agent.sock"
+vim.env.SSH_AUTH_SOCK = "/home/sean/.bitwarden-ssh-agent.sock"
 
 -- 1. Setup Lazy.nvim (Plugin Manager)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -47,6 +47,7 @@ require("lazy").setup({
 	require("plugins.autotag"),
 	require("plugins.oil"),
 	require("plugins.dadbod"),
+	-- require("plugins.flatten"),
 })
 -- 3. Load Mappings (NOW SAFE to call after plugins)
 -- This will now use which-key if it loaded successfully above,
