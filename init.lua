@@ -48,6 +48,7 @@ require("lazy").setup({
 	require("plugins.oil"),
 	require("plugins.dadbod"),
 	require("plugins.devcontainers"),
+	require("plugins.neoclip"),
 })
 -- 3. Load Mappings (NOW SAFE to call after plugins)
 -- This will now use which-key if it loaded successfully above,

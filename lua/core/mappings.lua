@@ -481,12 +481,6 @@ M.telescope = {
 			end,
 			"[S]earch [r]esume",
 		},
-		["<leader>sR"] = {
-			function()
-				require("telescope.builtin").registers()
-			end,
-			"[S]earch [R]egisters",
-		},
 		["<leader>s."] = {
 			function()
 				require("telescope.builtin").oldfiles()
@@ -516,6 +510,30 @@ M.telescope = {
 				})
 			end,
 			"[S]earch [/] in open files",
+		},
+	},
+}
+
+-- NeoClip
+M.neoclip = {
+	n = {
+		["<leader>sy"] = {
+			function()
+				require("telescope").extensions.neoclip.default()
+			end,
+			"[S]earch [Y]anks (neoclip)",
+		},
+		["<leader>sR"] = {
+			function()
+				require("telescope").extensions.neoclip.default()
+			end,
+			"[S]earch [R]egisters / Clipboard (neoclip)",
+		},
+		["<leader>sm"] = {
+			function()
+				require("telescope").extensions.macroscope.default()
+			end,
+			"[S]earch [M]acros (neoclip)",
 		},
 	},
 }
