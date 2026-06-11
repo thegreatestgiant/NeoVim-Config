@@ -647,4 +647,13 @@ M.dadbod = {
 	},
 }
 
+M.dev = {
+	n = {
+		["<leader>cs"] = { "<cmd>DevcontainerStart<CR>", "[c]ontainer [s]tart" },
+		["<leader>ca"] = { "<cmd>DevcontainerAttach<CR>", "[c]ontainer [a]ttach" },
+		["<leader>cS"] = { "<cmd>DevcontainerStop<CR>", "[c]ontainer [S]top" },
+		["<leader>cl"] = { "<cmd>DevcontainerLogs<CR>", "[c]ontainer [l]ogs" },
+	},
+}
+
 return M

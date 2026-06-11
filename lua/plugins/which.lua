@@ -46,6 +46,7 @@ return {
 				},
 
 				spec = {
+					{ "<leader>c", group = "devContainer" },
 					{ "<leader>d", group = "Debug" },
 					{ "<leader>D", group = "Database" },
 					{ "<leader>g", group = "Git" },

@@ -44,9 +44,10 @@ require("lazy").setup({
 	require("plugins.jdtls"),
 	require("plugins.maven"),
 	require("plugins.dap"),
-	require("plugins.autotag"),
+	-- require("plugins.autotag"),
 	require("plugins.oil"),
 	require("plugins.dadbod"),
+	require("plugins.devcontainers"),
 })
 -- 3. Load Mappings (NOW SAFE to call after plugins)
 -- This will now use which-key if it loaded successfully above,
