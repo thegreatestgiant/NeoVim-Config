@@ -111,13 +111,6 @@ return {
 		-- Reduce the delay before showing (default is 4000ms)
 		vim.opt.updatetime = 500 -- Show after 500ms of no movement
 
-		-- Enable the following language servers
-		--
-		-- Add any additional override configuration in the following tables. Available keys are:
-		-- - cmd (table): Override the default command used to start the server
-		-- - filetypes (table): Override the default list of associated filetypes for the server
-		-- - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-		-- - settings (table): Override the default settings passed when initializing the server.
 		local servers = {
 			lua_ls = {
 				settings = {
@@ -240,6 +233,16 @@ return {
 					},
 				},
 			},
+			jsonls = {
+				settings = {
+					json = {
+						validate = { enable = true },
+					},
+				},
+				init_options = {
+					provideFormatter = false, -- keep prettier as sole JSON formatter
+				},
+			},
 		}
 
 		-- Ensure the servers and tools above are installed
@@ -257,6 +260,7 @@ return {
 			"jdtls",
 			"vtsls",
 			"eslint_d",
+			"jsonls",
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 

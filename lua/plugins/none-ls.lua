@@ -29,14 +29,42 @@ return {
 				"gofumpt",
 				"goimports",
 				"staticcheck",
+				"json-repair",
 			},
 			automatic_installation = true,
+		})
+
+		local h = require("null-ls.helpers")
+
+		local json_repair = h.make_builtin({
+			name = "json_repair",
+			meta = {
+				url = "https://github.com/mangiucugna/json_repair",
+				description = "Repairs malformed JSON (missing commas, quotes, brackets).",
+			},
+			method = null_ls.methods.FORMATTING,
+			filetypes = { "json" },
+			generator_opts = {
+				command = "json_repair",
+				args = { "$FILENAME" },
+				to_stdin = false,
+				from_stderr = false,
+			},
+			factory = h.formatter_factory,
 		})
 
 		--------------------------------------------------------------------------
 		-- Sources (your original list preserved)
 		--------------------------------------------------------------------------
 		local sources = {
+			-- JSON repair: fixes structurally broken JSON (missing commas/brackets/quotes)
+			-- before prettier runs, since prettier requires syntactically valid input.
+			json_repair,
+
+			formatting.prettier.with({
+				filetypes = { "json" },
+			}),
+
 			-- Lua
 			formatting.stylua,
 
@@ -70,12 +98,19 @@ return {
 					"javascriptreact",
 					"typescript",
 					"typescriptreact",
-					"json",
-					"yaml",
 					"html",
 					"css",
 				},
 			}),
+
+			formatting.prettier.with({
+				filetypes = { "yaml" },
+				extra_args = { "--print-width", "1000" },
+			}),
+			formatting.prettier.with({
+				filetypes = { "json" },
+			}),
+
 			formatting.clang_format,
 			formatting.shfmt.with({ args = { "-i", "4" } }),
 
