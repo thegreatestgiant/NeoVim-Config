@@ -5,6 +5,7 @@ return {
 		-- optional: persist clipboard history across sessions
 		-- { "kkharji/sqlite.lua", module = "sqlite" },
 	},
+
 	event = "TextYankPost",
 	config = function()
 		require("neoclip").setup({
@@ -16,7 +17,7 @@ return {
 			filter = nil,
 			preview = true,
 			prompt = nil,
-			default_register = '"',
+			default_register = "+",
 			default_register_macros = "q",
 			enable_macro_history = true,
 			content_spec_column = false,
@@ -40,8 +41,8 @@ return {
 			keys = {
 				telescope = {
 					i = {
-						select = "<CR>",
-						paste = "<C-p>",
+						select = "<C-CR>",
+						paste = "<CR>",
 						paste_behind = "<C-k>",
 						replay = "<C-q>",
 						delete = "<C-d>",
@@ -49,8 +50,8 @@ return {
 						custom = {},
 					},
 					n = {
-						select = "<CR>",
-						paste = "p",
+						select = "<C-CR>",
+						paste = "<CR>",
 						paste_behind = "P",
 						replay = "q",
 						delete = "d",
