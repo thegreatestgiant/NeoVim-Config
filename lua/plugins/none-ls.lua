@@ -57,10 +57,6 @@ return {
 		-- Sources (your original list preserved)
 		--------------------------------------------------------------------------
 		local sources = {
-			-- JSON repair: fixes structurally broken JSON (missing commas/brackets/quotes)
-			-- before prettier runs, since prettier requires syntactically valid input.
-			json_repair,
-
 			formatting.prettier.with({
 				filetypes = { "json" },
 			}),
@@ -82,8 +78,13 @@ return {
 			diagnostics.commitlint,
 			diagnostics.markdownlint,
 			diagnostics.staticcheck,
-			diagnostics.yamllint,
 			diagnostics.checkmake,
+			diagnostics.yamllint.with({
+				extra_args = {
+					"-d",
+					"{extends: default, rules: {line-length: {max: 200}, comments: {min-spaces-from-content: 1}}}",
+				},
+			}),
 
 			-- Formatters
 			formatting.gofumpt,
@@ -168,6 +169,19 @@ return {
 				end,
 			})
 		end
+
+		vim.api.nvim_create_user_command("JsonRepair", function()
+			if vim.bo.filetype ~= "json" then
+				vim.notify("JsonRepair: not a JSON buffer", vim.log.levels.WARN)
+				return
+			end
+			vim.lsp.buf.format({
+				async = false,
+				filter = function(c)
+					return c.name == "null-ls"
+				end,
+			})
+		end, { desc = "Repair malformed JSON in current buffer" })
 		--------------------------------------------------------------------------
 		-- Setup null-ls
 		--------------------------------------------------------------------------
