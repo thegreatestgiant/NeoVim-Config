@@ -2,6 +2,12 @@ return {
 	{
 		"nvim-mini/mini.nvim",
 		version = false,
+		dependencies = {
+			{
+				"JoosepAlviste/nvim-ts-context-commentstring",
+				opts = { enable_autocmd = false },
+			},
+		},
 		config = function()
 			require("mini.ai").setup({ n_lines = 500 })
 			require("mini.surround").setup()
@@ -15,11 +21,6 @@ return {
 			require("mini.move").setup()
 			require("mini.bufremove").setup()
 			require("mini.hipatterns").setup()
-			-- require("mini.animate").setup({
-			-- 	scroll = {
-			-- 		enable = false,
-			-- 	},
-			-- })
 			require("core.utils").load_mappings("bufremove")
 		end,
 	},

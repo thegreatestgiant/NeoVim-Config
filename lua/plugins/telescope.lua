@@ -1,7 +1,7 @@
 return {
 	"nvim-telescope/telescope.nvim",
 	event = "VimEnter",
-	branch = "main",
+	branch = "master",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		{

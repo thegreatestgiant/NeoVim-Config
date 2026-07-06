@@ -1,12 +1,10 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	branch = "master",
+	branch = "main",
 	build = ":TSUpdate",
 	lazy = false,
 
 	dependencies = {
-		"nvim-treesitter/nvim-treesitter-textobjects",
-		"nvim-treesitter/nvim-treesitter-context",
 		{
 			"windwp/nvim-ts-autotag",
 			event = "VeryLazy",
@@ -23,71 +21,57 @@ return {
 	},
 
 	config = function()
-		require("nvim-treesitter.configs").setup({
-			ensure_installed = {
-				"bash",
-				"c",
-				"cpp",
-				"dockerfile",
-				"gitignore",
-				"go",
-				"html",
-				"java",
-				"json",
-				"lua",
-				"markdown",
-				"markdown_inline",
-				"python",
-				"regex",
-				"sql",
-				"toml",
-				"typescript",
-				"tsx",
-				"vim",
-				"vimdoc",
-				"xml",
-				"yaml",
-			},
+		require("nvim-treesitter").setup({})
 
-			highlight = {
-				enable = true,
-			},
+		local ensure_installed = {
+			"bash",
+			"c",
+			"cpp",
+			"dockerfile",
+			"gitignore",
+			"go",
+			"html",
+			"java",
+			"json",
+			"lua",
+			"markdown",
+			"markdown_inline",
+			"python",
+			"regex",
+			"sql",
+			"toml",
+			"typescript",
+			"tsx",
+			"vim",
+			"vimdoc",
+			"xml",
+			"yaml",
+		}
 
-			indent = {
-				enable = true,
-			},
+		require("nvim-treesitter").install(ensure_installed)
 
-			textobjects = {
-				move = {
-					enable = true,
-					set_jumps = true,
-					goto_next_start = {
-						["]f"] = "@function.outer",
-						["]c"] = "@class.outer",
-					},
-					goto_previous_start = {
-						["[f"] = "@function.outer",
-						["[c"] = "@class.outer",
-					},
-				},
-			},
+		-- Highlighting + indent are no longer setup() options on main branch;
+		-- they're started per-buffer.
+		vim.api.nvim_create_autocmd("FileType", {
+			callback = function(args)
+				local ft = vim.bo[args.buf].filetype
+				local lang = vim.treesitter.language.get_lang(ft) or ft
+				local ok = pcall(vim.treesitter.start, args.buf, lang)
+				if ok then
+					vim.bo[args.buf].indentexpr = "v:lua.require('nvim-treesitter').indentexpr()"
+					if vim.bo[args.buf].indentexpr ~= "" then
+						vim.opt_local.autoindent = true
+					end
+				end
+			end,
 		})
 
 		-- Folding
 		vim.opt.foldmethod = "expr"
-		vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+		vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 		vim.opt.foldcolumn = "1"
 		vim.opt.foldlevel = 99
 		vim.opt.foldlevelstart = 99
-
-		-- indenting
-		vim.api.nvim_create_autocmd("FileType", {
-			callback = function()
-				if vim.bo.indentexpr ~= "" then
-					vim.opt_local.autoindent = true
-				end
-			end,
-		})
 		vim.opt.foldenable = true
 	end,
 }
