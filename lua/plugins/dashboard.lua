@@ -12,11 +12,12 @@ return {
 					enable = true,
 				},
         -- stylua: ignore
-        center = {
+	center = {
           { action = "Telescope find_files",                                     desc = " Find File",       icon = " ", key = "f" },
           { action = "ene | startinsert",                                        desc = " New File",        icon = " ", key = "n" },
           { action = "Telescope oldfiles",                                       desc = " Recent Files",    icon = " ", key = "r" },
           { action = "Telescope live_grep",                                      desc = " Find Text",       icon = " ", key = "g" },
+          { action = "Lazygit",                                                  desc = " Lazygit",         icon = "󰊢 ", key = "L" },
           { action = 'lua require("telescope.builtin").find_files({ cwd = vim.fn.stdpath("config") })', desc = " Config",          icon = " ", key = "c" },
           { action = 'lua require("persistence").load()',                        desc = " Restore Session", icon = " ", key = "s" },
           { action = "Lazy",                                                     desc = " Lazy",            icon = "󰒲 ", key = "l" },
