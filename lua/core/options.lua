@@ -30,14 +30,12 @@ vim.o.smartindent = true
 vim.o.cindent = false
 vim.o.tabstop = 2
 vim.o.softtabstop = 2
-vim.o.expandtab = true
 
 -- disable netrw at the very start of your init.lua
 --g.loaded_netrw = 1
 --g.loaded_netrwPlugin = 1
 
 vim.o.termguicolors = true
-vim.opt.shortmess:append("c")
 vim.opt.iskeyword:append("-")
 vim.opt.formatoptions:remove({ "c", "r", "o" })
 vim.o.splitbelow = true

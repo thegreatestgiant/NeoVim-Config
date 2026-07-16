@@ -141,19 +141,6 @@ return {
 				group = format_group,
 				buffer = bufnr,
 				callback = function()
-					local can_format = false
-
-					for _, c in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-						if c:supports_method("textDocument/formatting") then
-							can_format = true
-							break
-						end
-					end
-
-					if not can_format then
-						return
-					end
-
 					-- Save cursor + window position
 					local view = vim.fn.winsaveview()
 
@@ -185,11 +172,9 @@ return {
 		--------------------------------------------------------------------------
 		-- Setup null-ls
 		--------------------------------------------------------------------------
-		vim.schedule(function()
-			null_ls.setup({
-				sources = sources,
-				on_attach = setup_format_on_save,
-			})
-		end)
+		null_ls.setup({
+			sources = sources,
+			on_attach = setup_format_on_save,
+		})
 	end,
 }

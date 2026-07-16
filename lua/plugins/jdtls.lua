@@ -1,10 +1,9 @@
-local M = {
+return {
 	"mfussenegger/nvim-jdtls",
-	lazy = true,
-}
-
-function M.setup()
-	local jdtls = require("jdtls")
+	ft = "java",
+	config = function()
+		vim.b.sleuth_automatic = 0
+		local jdtls = require("jdtls")
 
 	local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -133,6 +132,14 @@ function M.setup()
 	end
 
 	jdtls.start_or_attach(config)
-end
 
-return M
+	-- Reset diagnostics on attach as we did in init.lua
+	vim.schedule(function()
+		local bufnr = vim.api.nvim_get_current_buf()
+		local clients = vim.lsp.get_clients({ name = "jdtls", bufnr = bufnr })
+		if #clients > 0 then
+			vim.diagnostic.reset(clients[1].id, bufnr)
+		end
+	end)
+	end
+}
