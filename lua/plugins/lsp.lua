@@ -3,7 +3,7 @@ return {
 	dependencies = {
 		{ "mason-org/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
 
-		{ "mason-org/mason-lspconfig.nvim", opts = { automatic_enable = { exclude = { "jdtls", "sqlls" } } } },
+		{ "mason-org/mason-lspconfig.nvim", opts = { automatic_installation = { exclude = { "jdtls", "sqlls" } } } },
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		{
 			"j-hui/fidget.nvim",
@@ -212,6 +212,21 @@ return {
 					},
 				},
 
+				root_dir = function(arg1, arg2)
+					local source = vim.fn.getcwd()
+					if type(arg1) == "string" or type(arg1) == "number" then
+						source = arg1
+					end
+					local root = vim.fs.root(source, { "package.json", "tsconfig.json", "jsconfig.json", ".git" })
+					local result = root or vim.fn.getcwd()
+					
+					if type(arg2) == "function" then
+						arg2(result)
+					else
+						return result
+					end
+				end,
+
 				on_attach = function(client)
 					client.server_capabilities.documentFormattingProvider = false
 					client.server_capabilities.documentRangeFormattingProvider = false
@@ -220,12 +235,22 @@ return {
 			cssls = {},
 			html = {},
 			dockerls = {},
+			docker_compose_language_service = {},
 			postgres_lsp = {
 				filetypes = { "sql" },
 				workspace_required = false, -- ← this is the critical fix
-				root_dir = function(fname)
-					return require("lspconfig.util").root_pattern(".git", "docker-compose.yml", ".pgsql")(fname)
-						or vim.fn.getcwd()
+				root_dir = function(arg1, arg2)
+					local source = vim.fn.getcwd()
+					if type(arg1) == "string" or type(arg1) == "number" then
+						source = arg1
+					end
+					local root = vim.fs.root(source, { ".git", "docker-compose.yml", ".pgsql" })
+					local result = root or vim.fn.getcwd()
+					if type(arg2) == "function" then
+						arg2(result)
+					else
+						return result
+					end
 				end,
 				settings = {
 					postgres_lsp = {

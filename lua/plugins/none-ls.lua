@@ -30,6 +30,11 @@ return {
 				"goimports",
 				"staticcheck",
 				"json-repair",
+				"checkmake",
+				"actionlint",
+				"ansiblelint",
+				"impl",
+				"gomodifytags",
 			},
 			automatic_installation = true,
 		})
