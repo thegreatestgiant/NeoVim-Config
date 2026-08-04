@@ -1,5 +1,5 @@
 require("core.options")
-vim.env.SSH_AUTH_SOCK = "/home/sean/.bitwarden-ssh-agent.sock"
+vim.env.SSH_AUTH_SOCK = (os.getenv("XDG_RUNTIME_DIR") or ("/run/user/" .. vim.fn.trim(vim.fn.system("id -u")))) .. "/rbw/ssh-agent-socket"
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
