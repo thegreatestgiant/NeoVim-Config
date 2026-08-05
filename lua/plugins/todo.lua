@@ -27,6 +27,7 @@ return {
 				"--with-filename",
 				"--line-number",
 				"--column",
+				"--hidden",
 			},
 			-- This pattern is CRITICAL - it's what ripgrep uses to find TODOs
 			-- The default requires a colon after TODO, like: TODO:
