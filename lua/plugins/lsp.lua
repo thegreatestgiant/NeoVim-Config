@@ -112,6 +112,16 @@ return {
 		vim.opt.updatetime = 500 -- Show after 500ms of no movement
 
 		local servers = {
+			rust_analyzer = {
+				on_attach = function(client, bufnr)
+					vim.api.nvim_create_autocmd("BufWritePre", {
+						buffer = bufnr,
+						callback = function()
+							vim.lsp.buf.format({ async = false, id = client.id })
+						end,
+					})
+				end,
+			},
 			lua_ls = {
 				settings = {
 					Lua = {
@@ -275,6 +285,7 @@ return {
 		-- Ensure the servers and tools above are installed
 		local ensure_installed = vim.tbl_keys(servers or {})
 		vim.list_extend(ensure_installed, {
+			"rust_analyzer",
 			"stylua",
 			"clangd",
 			"clang-format",
