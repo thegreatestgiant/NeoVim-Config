@@ -24,6 +24,7 @@ return {
 		require("nvim-treesitter").setup({})
 
 		local ensure_installed = {
+			"asm",
 			"bash",
 			"c",
 			"cpp",

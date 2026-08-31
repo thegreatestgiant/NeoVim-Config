@@ -244,6 +244,9 @@ return {
 					client.server_capabilities.documentRangeFormattingProvider = false
 				end,
 			},
+			asm_lsp = {
+				filetypes = { "asm", "s", "S" },
+			},
 			cssls = {},
 			html = {},
 			dockerls = {},
@@ -299,6 +302,7 @@ return {
 			"vtsls",
 			"eslint_d",
 			"jsonls",
+			"asm-lsp",
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 

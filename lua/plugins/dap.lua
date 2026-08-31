@@ -22,10 +22,37 @@ return {
 					"javadbg",
 					"javatest",
 					"delve",
+					"codelldb",
 				},
 			})
 
 			delve.setup()
+
+			local codelldb_path = vim.fn.stdpath("data") .. "/mason/packages/codelldb/extension/adapter/codelldb"
+			dap.adapters.codelldb = {
+				type = "server",
+				port = "${port}",
+				executable = {
+					command = codelldb_path,
+					args = { "--port", "${port}" },
+				},
+			}
+			dap.configurations.c = {
+				{
+					name = "Launch (codelldb)",
+					type = "codelldb",
+					request = "launch",
+					program = function()
+						return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+					end,
+					cwd = "${workspaceFolder}",
+					stopOnEntry = false,
+					args = {},
+				},
+			}
+			dap.configurations.cpp = dap.configurations.c
+			dap.configurations.asm = dap.configurations.c
+
 			dapui.setup()
 
 			dap.listeners.before.attach.dapui_config = function()

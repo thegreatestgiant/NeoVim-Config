@@ -35,3 +35,10 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 		vim.api.nvim_win_set_cursor(0, cur_pos)
 	end,
 })
+
+vim.filetype.add({
+	extension = {
+		s = "asm",
+		S = "asm",
+	},
+})
