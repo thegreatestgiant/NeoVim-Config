@@ -14,6 +14,10 @@ return { -- Autocompletion
 				{
 					"rafamadriz/friendly-snippets",
 					config = function()
+						-- NOTE: If the Java `class` snippet starts outputting "TM_FILENAME_BASE"
+						-- literally again, it's a known typo in friendly-snippets.
+						-- To fix it, run:
+						-- sed -i 's/${1:TM_FILENAME_BASE}/${1:${TM_FILENAME_BASE}}/g' ~/.local/share/nvim/lazy/friendly-snippets/snippets/java/java.json
 						require("luasnip.loaders.from_vscode").lazy_load()
 					end,
 				},

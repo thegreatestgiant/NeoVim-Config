@@ -82,6 +82,15 @@ return {
 			default = true,
 		})
 	end
+	
+	-- Also register Java 21 so JDTLS knows about it natively
+	local arch_java21_home = "/usr/lib/jvm/java-21-openjdk"
+	if vim.fn.isdirectory(arch_java21_home) == 1 then
+		table.insert(runtimes, {
+			name = "JavaSE-21",
+			path = arch_java21_home,
+		})
+	end
 	-- --------------------------------------------
 
 	local cmd = {
