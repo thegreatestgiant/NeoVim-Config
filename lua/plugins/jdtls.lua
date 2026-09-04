@@ -8,6 +8,9 @@ return {
 	local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 	local function find_root()
+		local root = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" })
+		if root then return root end
+
 		local cwd = vim.fn.getcwd()
 		if vim.fn.isdirectory(cwd .. "/edu") == 1 then
 			return cwd
@@ -30,34 +33,58 @@ return {
 	local java_debug_path = mason_packages .. "/java-debug-adapter"
 	local java_test_path = mason_packages .. "/java-test"
 
-	local launcher = vim.fn.glob(mason_path .. "/plugins/org.eclipse.equinox.launcher_*.jar")
+	-- Safely get the launcher jar (using vim.split in case multiple are matched)
+	local launcher = vim.split(vim.fn.glob(mason_path .. "/plugins/org.eclipse.equinox.launcher_*.jar"), "\n")[1]
 
 	local bundles = {}
 
 	local debug_jar = vim.fn.glob(java_debug_path .. "/extension/server/com.microsoft.java.debug.plugin-*.jar", true)
 	if debug_jar ~= "" then
-		table.insert(bundles, debug_jar)
+		vim.list_extend(bundles, vim.split(debug_jar, "\n"))
 	end
 
-	-- note: we use java_test_path variable we created above
-	vim.list_extend(bundles, vim.split(vim.fn.glob(java_test_path .. "/extension/server/*.jar", true), "\n"))
+	-- Safely get the java-test OSGi bundle only (not the runner jars or junit libs)
+	local test_bundle = vim.fn.glob(java_test_path .. "/extension/server/com.microsoft.java.test.plugin-*.jar", true)
+	if test_bundle ~= "" then
+		vim.list_extend(bundles, vim.split(test_bundle, "\n"))
+	end
 
-	-- --- NEW CROSS-PLATFORM JAVA RESOLUTION ---
+	-- --- DYNAMIC JAVA 21 LSP RESOLUTION ---
 	local java_cmd = "java" -- Default fallback to PATH
 
-	local arch_java = "/usr/lib/jvm/default/bin/java"
-	local sdkman_java = vim.fn.expand("~/.sdkman/candidates/java/current/bin/java")
+	local arch_java21 = "/usr/lib/jvm/java-21-openjdk/bin/java"
+	local sdkman_java21 = vim.split(vim.fn.glob("~/.sdkman/candidates/java/21*/bin/java"), "\n")[1]
 
 	-- Check which Java executable is actually present on this specific machine
-	if vim.fn.executable(arch_java) == 1 then
-		java_cmd = arch_java
-	elseif vim.fn.executable(sdkman_java) == 1 then
-		java_cmd = sdkman_java
+	if vim.fn.executable(arch_java21) == 1 then
+		java_cmd = arch_java21
+	elseif sdkman_java21 and vim.fn.executable(sdkman_java21) == 1 then
+		java_cmd = sdkman_java21
 	end
-	-- ------------------------------------------
+	-- --------------------------------------
+
+	-- --- DYNAMIC JAVA 17 RUNTIME FOR PROJECTS ---
+	local java17_home = nil
+	local arch_java17_home = "/usr/lib/jvm/java-17-openjdk"
+	local sdkman_java17_home = vim.split(vim.fn.glob("~/.sdkman/candidates/java/17*/"), "\n")[1]
+
+	if vim.fn.isdirectory(arch_java17_home) == 1 then
+		java17_home = arch_java17_home
+	elseif sdkman_java17_home and vim.fn.isdirectory(sdkman_java17_home) == 1 then
+		java17_home = sdkman_java17_home
+	end
+
+	local runtimes = {}
+	if java17_home then
+		table.insert(runtimes, {
+			name = "JavaSE-17",
+			path = java17_home,
+			default = true,
+		})
+	end
+	-- --------------------------------------------
 
 	local cmd = {
-		-- "/home/sean/.sdkman/candidates/java/current/bin/java",
 		java_cmd,
 		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
 		"-Dosgi.bundles.defaultStartLevel=4",
@@ -84,6 +111,9 @@ return {
 		capabilities = capabilities,
 		settings = {
 			java = {
+				configuration = {
+					runtimes = #runtimes > 0 and runtimes or nil,
+				},
 				signatureHelp = { enabled = true },
 				format = {
 					settings = {
@@ -97,22 +127,6 @@ return {
 		init_options = {
 			bundles = bundles,
 		},
-
-		on_init = function(client, _)
-			client.notify("workspace/didChangeConfiguration", {
-				settings = {
-					java = {
-						project = {
-							referencedLibraries = {},
-							sourcePaths = {
-								root_dir .. "/edu",
-								root_dir .. "/ClassWork",
-							},
-						},
-					},
-				},
-			})
-		end,
 
 		-- ATTACH DAP MAPPINGS AFTER START
 		on_attach = function(client, bufnr)

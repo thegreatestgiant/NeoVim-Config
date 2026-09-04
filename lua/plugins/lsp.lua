@@ -3,7 +3,7 @@ return {
 	dependencies = {
 		{ "mason-org/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
 
-		{ "mason-org/mason-lspconfig.nvim", opts = { automatic_installation = { exclude = { "jdtls", "sqlls" } } } },
+		{ "mason-org/mason-lspconfig.nvim", opts = { automatic_installation = { exclude = { "jdtls", "sqlls" } }, automatic_enable = false } },
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		{
 			"j-hui/fidget.nvim",
