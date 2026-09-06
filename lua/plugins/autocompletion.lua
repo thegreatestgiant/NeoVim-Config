@@ -18,6 +18,10 @@ return { -- Autocompletion
 						-- literally again, it's a known typo in friendly-snippets.
 						-- To fix it, run:
 						-- sed -i 's/${1:TM_FILENAME_BASE}/${1:${TM_FILENAME_BASE}}/g' ~/.local/share/nvim/lazy/friendly-snippets/snippets/java/java.json
+						-- Additionally, friendly-snippets has annoying long prefixes for fields. To shorten them:
+						-- sed -i 's/"prefix": "private_field"/"prefix": "prif"/g' ~/.local/share/nvim/lazy/friendly-snippets/snippets/java/java.json
+						-- sed -i 's/"prefix": "public_field"/"prefix": "pubf"/g' ~/.local/share/nvim/lazy/friendly-snippets/snippets/java/java.json
+						-- sed -i 's/"prefix": "protected_field"/"prefix": "prof"/g' ~/.local/share/nvim/lazy/friendly-snippets/snippets/java/java.json
 						require("luasnip.loaders.from_vscode").lazy_load()
 					end,
 				},
@@ -124,12 +128,12 @@ return { -- Autocompletion
 				end, { "i", "s" }),
 			}),
 			sources = {
+				{ name = "luasnip", priority = 1100 },
 				{ name = "nvim_lsp", priority = 1000 },
 				{
 					name = "lazydev",
 					group_index = 0,
 				},
-				{ name = "luasnip" },
 				{ name = "buffer" },
 				{ name = "path" },
 			},
