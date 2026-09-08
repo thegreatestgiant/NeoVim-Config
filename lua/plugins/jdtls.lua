@@ -2,13 +2,12 @@ return {
 	"mfussenegger/nvim-jdtls",
 	ft = "java",
 	config = function()
-		vim.b.sleuth_automatic = 0
-		local jdtls = require("jdtls")
+	local jdtls = require("jdtls")
 
 	local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 	local function find_root()
-		local root = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" })
+		local root = require("jdtls.setup").find_root({ "pom.xml", "build.gradle", "mvnw", "gradlew", ".git" })
 		if root then return root end
 
 		local cwd = vim.fn.getcwd()
@@ -43,10 +42,16 @@ return {
 		vim.list_extend(bundles, vim.split(debug_jar, "\n"))
 	end
 
-	-- Safely get the java-test OSGi bundle only (not the runner jars or junit libs)
-	local test_bundle = vim.fn.glob(java_test_path .. "/extension/server/com.microsoft.java.test.plugin-*.jar", true)
-	if test_bundle ~= "" then
-		vim.list_extend(bundles, vim.split(test_bundle, "\n"))
+	-- Load all java-test OSGi bundles (plugin + its runtime dependencies like junit4/5/6 runtime)
+	-- but exclude the runner fat jar and jacocoagent which are not OSGi bundles
+	local test_jars = vim.split(vim.fn.glob(java_test_path .. "/extension/server/*.jar", true), "\n")
+	for _, jar in ipairs(test_jars) do
+		if jar ~= ""
+			and not vim.endswith(jar, "com.microsoft.java.test.runner-jar-with-dependencies.jar")
+			and not vim.endswith(jar, "jacocoagent.jar")
+		then
+			bundles[#bundles + 1] = jar
+		end
 	end
 
 	-- --- DYNAMIC JAVA 21 LSP RESOLUTION ---
@@ -154,6 +159,7 @@ return {
 		end
 	end
 
+	-- Attach to the current buffer (the one that triggered ft=java)
 	jdtls.start_or_attach(config)
 
 	-- Reset diagnostics on attach as we did in init.lua
@@ -164,5 +170,14 @@ return {
 			vim.diagnostic.reset(clients[1].id, bufnr)
 		end
 	end)
+
+	-- Also attach to every future Java buffer (config only runs once via lazy.nvim)
+	vim.api.nvim_create_autocmd("FileType", {
+		pattern = "java",
+		callback = function()
+			vim.b.sleuth_automatic = 0
+			jdtls.start_or_attach(config)
+		end,
+	})
 	end
 }
